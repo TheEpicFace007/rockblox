@@ -13,7 +13,10 @@ client = session.create_client(1818) # second argument can be a jobId
 time.sleep(8)
 
 client.chat_message("burger")
-time.sleep(5)
+time.sleep(2)
 
+client.screenshot().show()
+
+time.sleep(5)
 client.close()
 ```
