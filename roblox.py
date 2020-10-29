@@ -159,10 +159,6 @@ class Roblox:
     def is_auth(self):
         r = self.request("GET", "https://economy.roblox.com/v2/users/transactions?transactionType=Sale&limit=10")
         return r.status == 200
-        
-    def get_age(self):
-        r = self.request("GET", "https://www.roblox.com/my/settings/json")
-        return r.json()["AccountAgeInDays"]
     
     def request(self, method, url, headers={}, data=None):
         purl = urlsplit(url)
