@@ -1,2 +1,2 @@
 # roblox
-Python roblox module primarily focused on the game client
+Python roblox module, primarily focused on the game client.
