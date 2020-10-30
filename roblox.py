@@ -29,7 +29,7 @@ def get_hwnds_for_pid(pid):
     win32gui.EnumWindows(callback, hwnds)
     return hwnds
 
-def find_roblox_client_path():
+def find_client_path():
     templates = [
         "C:\\Users\\{username}\\AppData\\Local\\Roblox\\Versions\\{version}",
         "C:\\Program Files (x86)\\Roblox\\Versions\\{version}",
@@ -73,7 +73,7 @@ class Client:
         
         launch_time = int(time.time()*1000)
         self.process = subprocess.Popen([
-            find_roblox_client_path() + "\\RobloxPlayerBeta.exe",
+            find_client_path() + "\\RobloxPlayerBeta.exe",
             "--play",
             "-a", self.redeem_url,
             "-t", self.auth_ticket,
