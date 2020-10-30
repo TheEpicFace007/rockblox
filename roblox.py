@@ -157,7 +157,7 @@ class Roblox:
         return headers
 
     def is_auth(self):
-        r = self.request("GET", "https://economy.roblox.com/v2/users/transactions?transactionType=Sale&limit=10")
+        r = self.request("GET", "https://users.roblox.com/v1/users/authenticated")
         return r.status == 200
     
     def request(self, method, url, headers={}, data=None):
