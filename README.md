@@ -24,6 +24,6 @@ sleep(2)
 
 client.screenshot().save("me_saying_burger.png")
 
-sleep(5)
+sleep(2)
 client.close()
 ```
