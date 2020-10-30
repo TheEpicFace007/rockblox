@@ -12,7 +12,7 @@ from time import sleep
 mutex = RobloxClientMutex()
 
 with open("cookie.txt") as f:
-  session = Roblox(f.read())
+  session = Roblox(f.read().strip())
 
 client = session.create_client(1818) # second argument can be a jobId
 sleep(8)
