@@ -6,7 +6,7 @@ Python roblox module, primarily focused on the game client.
 from roblox import Roblox, RobloxClientMutex
 from time import sleep
 
-# allows for multiple instances to be opened
+# allows for multiple clients to be opened
 mutex = RobloxClientMutex()
 
 with open("cookie.txt") as f:
