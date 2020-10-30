@@ -1,7 +1,9 @@
 # roblox
 Python roblox module, primarily focused on the game client.
 
-The timing of key presses needs to be improved.
+Since this module doesn't directly hook into the client, it is limited by the following things:
+- It can only interact with one client at a time
+- The timing of key presses may cause chat messages to be cut off
 
 # Usage
 ```python
