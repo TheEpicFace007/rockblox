@@ -107,7 +107,7 @@ class Client:
             self.focus()
             press_key(0x7A)
             release_key(0x7A)
-            time.sleep(0.1)
+            time.sleep(0.3)
             image = ImageGrab.grab()
             press_key(0x7A)
             release_key(0x7A)
