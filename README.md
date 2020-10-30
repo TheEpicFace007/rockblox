@@ -1,6 +1,8 @@
 # roblox
 Python roblox module, primarily focused on the game client.
 
+The timing of key presses needs to be improved.
+
 # Usage
 ```python
 from roblox import Roblox, RobloxClientMutex
