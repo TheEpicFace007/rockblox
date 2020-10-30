@@ -20,7 +20,7 @@ sleep(8)
 client.chat_message("burger")
 sleep(2)
 
-client.screenshot().show()
+client.screenshot().save("me_saying_burger.png")
 
 sleep(5)
 client.close()
