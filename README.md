@@ -24,3 +24,6 @@ sleep(1)
 client.screenshot().show()
 client.close()
 ```
+
+## Client.is_in_game(match_job_id=False)
+Checks if the user is currently in the specified game, using the presence web-api. Can be used as a kind of "ping", to check if the client has disconnected from the game.
