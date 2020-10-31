@@ -82,7 +82,7 @@ class Client:
             data={"userIds": [self.parent.id]}
         )
         me = resp.json()["userPresences"][0]
-        return me["placeId"] \
+        return me["placeId"] == self.place_id \
             and ((self.job_id and match_job_id and me["gameId"] == self.job_id) \
                 or (not self.job_id or not match_job_id))
 
