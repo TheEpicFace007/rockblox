@@ -25,5 +25,15 @@ client.screenshot().show()
 client.close()
 ```
 
-## Client.is_in_game(match_job_id=False)
+### Client.wait_for(timeout=15, check_interval=0.25)
+Waits until the client is past the loading screen. It uses the screenshot method and therefore may not be 100% reliable.
+
+### Client.is_in_game(match_job_id=False)
 Checks if the user is currently in-game using the presence web-api, can be used as a kind of "ping" to check if the client has disconnected from the game.
+
+### Client.screenshot()
+Returns a `PIL.Image` screenshot of the client.
+
+### Client.chat_message(message)
+Attempts to write and send a chat message using the client.
+
