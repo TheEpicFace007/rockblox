@@ -64,7 +64,6 @@ class Client:
         self.job_id = job_id
         self.process = None
         self.hwnd = None
-        self.dc_handle = None
         self.start()
     
     def __repr__(self):
@@ -151,8 +150,8 @@ class Client:
         return (w-xo, h-yo)
 
     def screenshot(self):
-        self.dc_handle = win32gui.GetWindowDC(self.hwnd)
-        dcObj=win32ui.CreateDCFromHandle(self.dc_handle)
+        dc_handle = win32gui.GetWindowDC(self.hwnd)
+        dcObj=win32ui.CreateDCFromHandle(dc_handle)
         cDC=dcObj.CreateCompatibleDC()
         dataBitMap = win32ui.CreateBitmap()
         dataBitMap.CreateCompatibleBitmap(dcObj, *self.size())
@@ -167,7 +166,7 @@ class Client:
         dcObj.DeleteDC()
         cDC.DeleteDC()
         win32gui.DeleteObject(dataBitMap.GetHandle())
-        win32gui.ReleaseDC(self.hwnd, self.dc_handle)
+        win32gui.ReleaseDC(self.hwnd, dc_handle)
         return im.crop((11,45, *self.size(11, 11)))
 
     def chat_message(self, message):
