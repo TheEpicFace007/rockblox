@@ -34,7 +34,7 @@ Waits until the client is past the loading screen. It uses the screenshot method
 Checks if the user is currently in-game using the presence web-api, can be used as a kind of "ping" to check if the client has disconnected from the game.
 
 ### Client.screenshot()
-Returns a `PIL.Image` screenshot of the client.
+Returns a `PIL.Image` screenshot of the client in it's current window size.
 
 ### Client.chat_message(message)
 Attempts to write and send a chat message by simulating keystrokes on the client.
