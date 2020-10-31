@@ -169,10 +169,10 @@ class Roblox:
             
             
     def __repr__(self):
-            if self.id:
-                return self.name
-            else:
-                return "Unauthenticated"
+        if self.id:
+            return self.name
+        else:
+            return "Unauthenticated"
 
     def auth_from_cookie(self, ROBLOSECURITY):
         self.ROBLOSECURITY = ROBLOSECURITY
