@@ -35,6 +35,7 @@ Checks if the user is currently in-game using the presence web-api, can be used 
 
 ### Client.screenshot()
 Returns a `PIL.Image` screenshot of the client in it's current window size.
+Note: this now should be able to take screenshots even if another window is in-front of the client, so I have taken off the client_lock
 
 ### Client.chat_message(message)
 Attempts to write and send a chat message by simulating keystrokes on the client.
