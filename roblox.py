@@ -64,7 +64,7 @@ class Client:
         self.process = None
         self.hwnd = None
         self.start()
-
+#
     def build_joinscript_url(self):
         if self.place_id and self.job_id:
             script_url = f"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGameJob&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&gameId={self.game_job}&isPlayTogetherGame=false"
