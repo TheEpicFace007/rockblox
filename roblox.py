@@ -55,13 +55,14 @@ class RobloxClientMutex:
         self.mutex = ctypes.windll.kernel32.CreateMutexW(None, True, "ROBLOX_singletonMutex")
 
 class Client:
-    def __init__(self, parent, place_id, job_id):
+    redeem_url = "https://www.roblox.com/Login/Negotiate.ashx"
+
+    def __init__(self, parent, place_id, job_id=None):
         self.parent = parent
-        self.process = None
-        self.hwnd = None
         self.place_id = place_id
         self.job_id = job_id
-        self.redeem_url = "https://www.roblox.com/Login/Negotiate.ashx"
+        self.process = None
+        self.hwnd = None
         self.start()
 
     def build_joinscript_url(self):
