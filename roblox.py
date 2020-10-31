@@ -55,20 +55,46 @@ class RobloxClientMutex:
         self.mutex = ctypes.windll.kernel32.CreateMutexW(None, True, "ROBLOX_singletonMutex")
 
 class Client:
-    def __init__(self, parent, script_url):
+    def __init__(self, parent, place_id, job_id):
         self.parent = parent
         self.process = None
         self.hwnd = None
-        self.auth_ticket = None
-        self.script_url = script_url
+        self.place_id = place_id
+        self.job_id = job_id
         self.redeem_url = "https://www.roblox.com/Login/Negotiate.ashx"
         self.start()
+
+    def build_joinscript_url(self):
+        if self.place_id and self.job_id:
+            script_url = f"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGameJob&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&gameId={self.game_job}&isPlayTogetherGame=false"
+        elif self.place_id:
+            script_url = f"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGame&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&isPlayTogetherGame=false"
+        return script_url
+
+    def is_in_game(self, match_job_id=False):
+        resp = self.parent.request(
+            method="POST",
+            url="https://presence.roblox.com/v1/presence/users",
+            data={"userIds": [self.parent.id]}
+        )
+        me = resp.json()["userPresences"][0]
+        return me["placeId"] \
+            and ((self.job_id and match_job_id and me["gameId"] == self.job_id) \
+                or (not self.job_id or not match_job_id))
+
+    def wait_for(self, timeout=10, match_job_id=False):
+        st = time.time()
+        while ((time.time()-st) < timeout):
+            if self.is_in_game(match_job_id):
+                return True
+            time.sleep(1)
+        raise TimeoutError
 
     def start(self):
         if self.process:
             raise Exception(".start() has already been called")
 
-        self.auth_ticket = self.parent.request("POST", "https://auth.roblox.com/v1/authentication-ticket") \
+        auth_ticket = self.parent.request("POST", "https://auth.roblox.com/v1/authentication-ticket") \
             .headers["rbx-authentication-ticket"]
         
         launch_time = int(time.time()*1000)
@@ -76,8 +102,8 @@ class Client:
             find_client_path() + "\\RobloxPlayerBeta.exe",
             "--play",
             "-a", self.redeem_url,
-            "-t", self.auth_ticket,
-            "-j", self.script_url,
+            "-t", auth_ticket,
+            "-j", self.build_joinscript_url(),
             "-b", str(self.parent.browser_tracker_id),
             "--launchtime=" + str(launch_time),
             "--rloc", "en_us",
@@ -132,11 +158,20 @@ class Roblox:
         self.csrf_token = None
         self.browser_tracker_id = random.randint(1, 1231324234)
         self.ROBLOSECURITY = None
+        self.id = None
+        self.name = None
         if ROBLOSECURITY:
             self.auth_from_cookie(ROBLOSECURITY)
 
     def auth_from_cookie(self, ROBLOSECURITY):
         self.ROBLOSECURITY = ROBLOSECURITY
+
+        auth_info = self.get_auth()
+        if not auth_info:
+            raise Exception("Invalid or expired .ROBLOSECURITY cookie")
+
+        self.id = auth_info["id"]
+        self.name = auth_info["name"]
 
     def get_cookies(self, host):
         cookies = {}
@@ -156,9 +191,9 @@ class Roblox:
                     headers["X-CSRF-TOKEN"] = self.csrf_token
         return headers
 
-    def is_auth(self):
+    def get_auth(self):
         r = self.request("GET", "https://users.roblox.com/v1/users/authenticated")
-        return r.status == 200
+        return r.status == 200 and r.json()
     
     def request(self, method, url, headers={}, data=None):
         purl = urlsplit(url)
@@ -182,10 +217,5 @@ class Roblox:
         resp.json = lambda: json.loads(resp.data)
         return resp
 
-    def create_client(self, place_id, game_id=None):
-        if place_id and game_id:
-            script_url = f"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGameJob&browserTrackerId={self.browser_tracker_id}&placeId={place_id}&gameId={game_id}&isPlayTogetherGame=false"
-        else:
-            script_url = f"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGame&browserTrackerId={self.browser_tracker_id}&placeId={place_id}&isPlayTogetherGame=false"
-
-        return Client(self, script_url)
+    def create_client(self, place_id, job_id=None):
+        return Client(self, place_id, job_id)
