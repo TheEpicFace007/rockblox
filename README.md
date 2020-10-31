@@ -17,7 +17,7 @@ with open("cookie.txt") as f:
   session = Roblox(f.read().strip())
 
 client = session.create_client(1818) # second argument can be a jobId
-sleep(8)
+client.wait_for(15) # wait up to 15 seconds, for user to appear in game
 
 client.chat_message("burger")
 sleep(2)
