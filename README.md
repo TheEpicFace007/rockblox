@@ -10,8 +10,7 @@ Since this module doesn't directly hook into the client, it is limited by the fo
 from roblox import Roblox, RobloxClientMutex
 from time import sleep
 
-# allows for multiple clients to be opened
-mutex = RobloxClientMutex()
+mutex = RobloxClientMutex() # allows for multiple clients to be open at once
 
 with open("cookie.txt") as f:
   session = Roblox(f.read().strip())
