@@ -15,10 +15,10 @@ import random
 import ctypes
 import os
 
-client_lock = Lock()
-shell = win32com.client.Dispatch("WScript.Shell")
+client_lock = Lock() # used to limit certain interactions to one client at a time
+shell = win32com.client.Dispatch("WScript.Shell") # setforeground needs this for some reason
 
-def get_hwnds_for_pid(pid):
+def get_hwnds_for_pid(pid): # TODO: make this less bulkier
     def callback(hwnd, hwnds):
         if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
             _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
@@ -52,6 +52,11 @@ def find_client_path():
     raise FileNotFoundError("Could not find path to client")
 
 class RobloxClientMutex:
+    """
+    Takes control of the client mutex, allowing multiple clients to be open at the same time.
+    Won't work if a client is already open before it is called.
+    """
+    
     def __init__(self):
         self.mutex = ctypes.windll.kernel32.CreateMutexW(None, True, "ROBLOX_singletonMutex")
 
@@ -70,12 +75,17 @@ class Client:
         return f"Client for {self.parent}"
 
     def build_joinscript_url(self):
+        pl_url = "https://assetgame.roblox.com/game/PlaceLauncher.ashx"
         if self.place_id and self.job_id:
-            script_url = f"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGameJob&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&gameId={self.job_id}&isPlayTogetherGame=false"
+            script_url = f"{pl_url}?request=RequestGameJob&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&gameId={self.job_id}&isPlayTogetherGame=false"
         elif self.place_id:
-            script_url = f"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGame&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&isPlayTogetherGame=false"
+            script_url = f"{pl_url}?request=RequestGame&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&isPlayTogetherGame=false"
         return script_url
-
+    
+    """
+    Uses the 'Presence Web-API' to check if the user is currently in-game.
+    Can be used as a kind of "ping" to check if the client has disconnected from the game.
+    """
     def is_in_game(self, match_job_id=False):
         resp = self.parent.request(
             method="POST",
@@ -87,6 +97,9 @@ class Client:
             and ((self.job_id and match_job_id and me["gameId"] == self.job_id) \
                 or (not self.job_id or not match_job_id))
 
+    """
+    Waits until the client is past the loading screen.
+    """
     def wait_for(self, timeout=15, check_interval=0.25):
         t = time.time()
         
