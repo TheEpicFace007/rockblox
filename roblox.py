@@ -2,20 +2,21 @@ from urllib3 import PoolManager
 from urllib.parse import urlsplit
 from input import press_key, release_key, bulk_press_and_release_key
 from threading import Lock
-from PIL import Image, ImageGrab
+from PIL import Image
+import win32gui
+import win32ui
+import win32con
+import win32process
+import win32com.client
 import json
 import time
 import subprocess
 import random
 import ctypes
 import os
-import win32gui
-import win32process
-import win32gui
-import win32com.client
 
-shell = win32com.client.Dispatch("WScript.Shell")
 client_lock = Lock()
+shell = win32com.client.Dispatch("WScript.Shell")
 
 def get_hwnds_for_pid(pid):
     def callback(hwnd, hwnds):
@@ -63,6 +64,7 @@ class Client:
         self.job_id = job_id
         self.process = None
         self.hwnd = None
+        self.dc_handle = None
         self.start()
     
     def __repr__(self):
@@ -70,7 +72,7 @@ class Client:
 
     def build_joinscript_url(self):
         if self.place_id and self.job_id:
-            script_url = f"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGameJob&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&gameId={self.game_job}&isPlayTogetherGame=false"
+            script_url = f"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGameJob&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&gameId={self.job_id}&isPlayTogetherGame=false"
         elif self.place_id:
             script_url = f"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGame&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&isPlayTogetherGame=false"
         return script_url
@@ -86,14 +88,20 @@ class Client:
             and ((self.job_id and match_job_id and me["gameId"] == self.job_id) \
                 or (not self.job_id or not match_job_id))
 
-    def wait_for(self, timeout=10, match_job_id=False):
-        st = time.time()
-        while ((time.time()-st) < timeout):
-            if self.is_in_game(match_job_id):
-                return True
-            time.sleep(1)
+    def wait_for(self, timeout=15, check_interval=0.25):
+        t = time.time()
+        
+        while (time.time()-t) < timeout:
+            screenshot = self.screenshot()
+            pixels = screenshot.getcolors(screenshot.size[0]*screenshot.size[1])
+            sorted_pixels = sorted(pixels, key=lambda t: t[0])
+            dominant_color = sorted_pixels[-1][1]
+            if dominant_color != (45, 45, 45):
+                return
+            time.sleep(check_interval)
+        
         raise TimeoutError
-
+        
     def start(self):
         if self.process:
             raise Exception(".start() has already been called")
@@ -125,6 +133,8 @@ class Client:
             self.close()
             raise TimeoutError("Timed out while getting window")
 
+        time.sleep(1)
+
     def close(self):
         self.process.kill()
 
@@ -132,29 +142,44 @@ class Client:
         shell.SendKeys('%')
         win32gui.SetForegroundWindow(self.hwnd)
 
+    def size(self, xo=0, yo=0):
+        rect = win32gui.GetWindowRect(self.hwnd)
+        x = rect[0]
+        y = rect[1]
+        w = rect[2] - x
+        h = rect[3] - y
+        return (w-xo, h-yo)
+
     def screenshot(self):
-        with client_lock:
-            self.focus()
-            press_key(0x7A)
-            release_key(0x7A)
-            time.sleep(0.3)
-            image = ImageGrab.grab()
-            press_key(0x7A)
-            release_key(0x7A)
-        return image
+        self.dc_handle = win32gui.GetWindowDC(self.hwnd)
+        dcObj=win32ui.CreateDCFromHandle(self.dc_handle)
+        cDC=dcObj.CreateCompatibleDC()
+        dataBitMap = win32ui.CreateBitmap()
+        dataBitMap.CreateCompatibleBitmap(dcObj, *self.size())
+        cDC.SelectObject(dataBitMap)
+        cDC.BitBlt((0,0),self.size(), dcObj, (0,0), win32con.SRCCOPY)
+        bmpinfo = dataBitMap.GetInfo()
+        bmpstr = dataBitMap.GetBitmapBits(True)
+        im = Image.frombuffer(
+            'RGB',
+            (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
+            bmpstr, 'raw', 'BGRX', 0, 1)
+        dcObj.DeleteDC()
+        cDC.DeleteDC()
+        win32gui.DeleteObject(dataBitMap.GetHandle())
+        win32gui.ReleaseDC(self.hwnd, self.dc_handle)
+        return im.crop((11,45, *self.size(11, 11)))
 
     def chat_message(self, message):
         with client_lock:
             self.focus()
             press_key(0xBF)
-            time.sleep(0.03)
             release_key(0xBF)
             time.sleep(0.05)
             bulk_press_and_release_key(message)
             press_key(0x0D)
-            time.sleep(0.03)
             release_key(0x0D)
-            time.sleep(0.08)
+            time.sleep(0.05)
 
 class Roblox:
     def __init__(self, ROBLOSECURITY=None, manager=None):
@@ -166,7 +191,6 @@ class Roblox:
         self.name = None
         if ROBLOSECURITY:
             self.auth_from_cookie(ROBLOSECURITY)
-            
             
     def __repr__(self):
         if self.id:

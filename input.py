@@ -237,6 +237,6 @@ def bulk_press_and_release_key(s):
         code = VK_CODE.get(k.lower())
         if code:
             press_key(code)
-            time.sleep(0.01)
             release_key(code)
             time.sleep(0.01)
+    time.sleep(0.01)
