@@ -1,5 +1,5 @@
 # roblox
-Python roblox module, primarily focused on the game client.
+Python Roblox module, primarily focused on the game client.
 
 Since this module doesn't directly hook into the client, it is limited by the following things:
 - It can only interact with one client at a time
