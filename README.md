@@ -25,6 +25,8 @@ client.screenshot().show()
 client.close()
 ```
 
+# Documentation
+
 ### Client.wait_for(timeout=15, check_interval=0.25)
 Waits until the client is past the loading screen. It uses the screenshot method and therefore may not be 100% reliable.
 
