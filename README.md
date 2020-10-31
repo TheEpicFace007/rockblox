@@ -39,3 +39,5 @@ Returns a `PIL.Image` screenshot of the client.
 ### Client.chat_message(message)
 Attempts to write and send a chat message using the client.
 
+### Client.close()
+Kils the client process.
