@@ -64,7 +64,10 @@ class Client:
         self.process = None
         self.hwnd = None
         self.start()
-#
+    
+    def __repr__(self):
+        return f"Client for {self.parent}"
+
     def build_joinscript_url(self):
         if self.place_id and self.job_id:
             script_url = f"https://assetgame.roblox.com/game/PlaceLauncher.ashx?request=RequestGameJob&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&gameId={self.game_job}&isPlayTogetherGame=false"
@@ -163,6 +166,13 @@ class Roblox:
         self.name = None
         if ROBLOSECURITY:
             self.auth_from_cookie(ROBLOSECURITY)
+            
+            
+    def __repr__(self):
+            if self.id:
+                return self.name
+            else:
+                return "Unauthenticated"
 
     def auth_from_cookie(self, ROBLOSECURITY):
         self.ROBLOSECURITY = ROBLOSECURITY
