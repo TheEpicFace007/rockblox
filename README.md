@@ -37,7 +37,7 @@ Checks if the user is currently in-game using the presence web-api, can be used 
 Returns a `PIL.Image` screenshot of the client.
 
 ### Client.chat_message(message)
-Attempts to write and send a chat message by simulating key presses on the client.
+Attempts to write and send a chat message by simulating keystrokes on the client.
 
 ### Client.close()
 Kills the client process.
