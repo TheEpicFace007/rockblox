@@ -40,4 +40,4 @@ Returns a `PIL.Image` screenshot of the client.
 Attempts to write and send a chat message using the client.
 
 ### Client.close()
-Kils the client process.
+Kills the client process.
