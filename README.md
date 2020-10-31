@@ -5,6 +5,8 @@ Since this module doesn't directly hook into the client, it is limited by the fo
 - It can only interact with one client at a time
 - Keystrokes may fail to register in time, causing chat messages to cut off
 
+DM me if you're smart, and know a way to send keystrokes to the client, without focusing the window.
+
 # Usage
 ```python
 from roblox import Roblox, RobloxClientMutex
@@ -35,10 +37,9 @@ Checks if the user is currently in-game using the presence web-api, can be used 
 
 ### Client.screenshot()
 Returns a `PIL.Image` screenshot of the client in it's current window size.
-Note: this now should be able to take screenshots even if another window is in-front of the client, so I have taken off the client_lock
 
 ### Client.chat_message(message)
-Attempts to write and send a chat message by simulating keystrokes on the client. DM me if ur smart and know a way of doing this, without focusing the window.
+Attempts to write and send a chat message by simulating keystrokes on the client.
 
 ### Client.close()
 Kills the client process.
