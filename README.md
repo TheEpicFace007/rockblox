@@ -29,17 +29,20 @@ client.close()
 
 # Documentation
 
-### Client.wait_for(timeout=15, check_interval=0.25)
+### RobloxClient(session, place_id, job_id=None, client_path=None)
+Launches a new client instance.
+
+### RobloxClient.wait_for(timeout=15, check_interval=0.25)
 Waits until the client is past the loading screen. It uses the screenshot method and therefore may not be 100% reliable.
 
-### Client.is_in_game(match_job_id=False)
+### RobloxClient.is_in_game(match_job_id=False)
 Checks if the user is currently in-game using the presence web-api, can be used as a kind of "ping" to check if the client has disconnected from the game.
 
-### Client.screenshot()
+### RobloxClient.screenshot()
 Returns a `PIL.Image` screenshot of the client in it's current window size.
 
-### Client.chat_message(message)
+### RobloxClient.chat_message(message)
 Attempts to write and send a chat message by simulating keystrokes on the client.
 
-### Client.close()
+### RobloxClient.close()
 Kills the client process.
