@@ -35,10 +35,10 @@ Launches a new client instance.
 ### RobloxClient.wait_for(timeout=15, check_interval=0.25)
 Waits until the client is past the loading screen. It uses the screenshot method and therefore may not be 100% reliable.
 
-### RobloxClient.is_in_game(match_job_id=False)
+### RobloxClient.ping(match_job_id=False) -> bool
 Checks if the user is currently in-game using the presence web-api, can be used as a kind of "ping" to check if the client has disconnected from the game.
 
-### RobloxClient.screenshot()
+### RobloxClient.screenshot() -> PIL.Image
 Returns a `PIL.Image` screenshot of the client in it's current window size.
 
 ### RobloxClient.chat_message(message)
