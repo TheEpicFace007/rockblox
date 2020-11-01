@@ -91,7 +91,7 @@ class Client:
     Uses the 'Presence Web-API' to check if the user is currently in-game.
     Can be used as a kind of "ping" to check if the client has disconnected from the game.
     """
-    def is_in_game(self, match_job_id: bool=False) -> bool:
+    def ping(self, match_job_id: bool=False) -> bool:
         resp = self.session.request(
             method="POST",
             url="https://presence.roblox.com/v1/presence/users",
