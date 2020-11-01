@@ -168,7 +168,10 @@ class Client:
         w = rect[2] - x
         h = rect[3] - y
         return (w-xo, h-yo)
-
+    
+    """
+    Captures a `PIL.Image` screenshot of the client window
+    """
     def screenshot(self) -> Image:
         dc_handle = win32gui.GetWindowDC(self.hwnd)
         dcObj=win32ui.CreateDCFromHandle(dc_handle)
@@ -188,7 +191,10 @@ class Client:
         win32gui.DeleteObject(dataBitMap.GetHandle())
         win32gui.ReleaseDC(self.hwnd, dc_handle)
         return im.crop((11,45, *self.size(11, 11)))
-
+    
+    """
+    Attempts to write and send a chat message by simulating keystrokes
+    """
     def chat_message(self, message: str):
         with client_lock:
             self.focus()
