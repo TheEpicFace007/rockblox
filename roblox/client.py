@@ -66,9 +66,9 @@ class Client:
     hwnd: int
     process: subprocess.Popen
 
-    def __init__(self, parent: 'Session', place_id: int, job_id: str=None,
+    def __init__(self, session: 'Session', place_id: int, job_id: str=None,
         client_path: str=None):
-        self.parent = parent
+        self.session = session
         self.client_path = client_path or find_client_path()
         self.place_id = place_id
         self.job_id = job_id
@@ -77,14 +77,14 @@ class Client:
         self.start()
     
     def __repr__(self):
-        return f"Client for {self.parent}"
+        return f"Client for {self.session}"
 
     def build_joinscript_url(self) -> str:
         pl_url = "https://assetgame.roblox.com/game/PlaceLauncher.ashx"
         if self.place_id and self.job_id:
-            script_url = f"{pl_url}?request=RequestGameJob&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&gameId={self.job_id}&isPlayTogetherGame=false"
+            script_url = f"{pl_url}?request=RequestGameJob&browserTrackerId={self.session.browser_tracker_id}&placeId={self.place_id}&gameId={self.job_id}&isPlayTogetherGame=false"
         elif self.place_id:
-            script_url = f"{pl_url}?request=RequestGame&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&isPlayTogetherGame=false"
+            script_url = f"{pl_url}?request=RequestGame&browserTrackerId={self.session.browser_tracker_id}&placeId={self.place_id}&isPlayTogetherGame=false"
         return script_url
     
     """
@@ -92,10 +92,10 @@ class Client:
     Can be used as a kind of "ping" to check if the client has disconnected from the game.
     """
     def is_in_game(self, match_job_id: bool=False) -> bool:
-        resp = self.parent.request(
+        resp = self.session.request(
             method="POST",
             url="https://presence.roblox.com/v1/presence/users",
-            data={"userIds": [self.parent.id]}
+            data={"userIds": [self.session.id]}
         )
         me = resp.json()["userPresences"][0]
         return me["placeId"] == self.place_id \
@@ -123,7 +123,7 @@ class Client:
         if self.process:
             raise Exception(".start() has already been called")
 
-        auth_ticket = self.parent.request("POST", "https://auth.roblox.com/v1/authentication-ticket") \
+        auth_ticket = self.session.request("POST", "https://auth.roblox.com/v1/authentication-ticket") \
             .headers["rbx-authentication-ticket"]
         
         launch_time = int(time.time()*1000)
@@ -133,7 +133,7 @@ class Client:
             "-a", self.redeem_url,
             "-t", auth_ticket,
             "-j", self.build_joinscript_url(),
-            "-b", str(self.parent.browser_tracker_id),
+            "-b", str(self.session.browser_tracker_id),
             "--launchtime=" + str(launch_time),
             "--rloc", "en_us",
             "--gloc", "en_us"
