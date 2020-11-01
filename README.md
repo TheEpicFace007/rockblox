@@ -5,7 +5,7 @@ Since this module doesn't directly hook into the client, it is limited by the fo
 - It can only interact with one client at a time
 - Keystrokes may fail to register in time, causing chat messages to cut off
 
-DM me if you're smart, and know a way to send keystrokes to the client, without focusing the window.
+DM me if you know of a way to send keystrokes to the client, without focusing the window.
 
 # Usage
 ```python
