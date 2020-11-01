@@ -15,11 +15,6 @@ import os
 client_lock = Lock() # used to limit certain interactions to one client at a time
 shell = win32com.client.Dispatch("WScript.Shell") # setforeground needs this for some reason
 
-# get the current client version
-with PoolManager() as pm:
-    CLIENT_VERSION = pm.request("GET", "http://setup.roblox.com/version.txt") \
-        .data.decode("UTF-8").strip()
-
 def get_hwnds_for_pid(pid) -> list: # TODO: make this less bulkier
     def callback(hwnd, hwnds):
         if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
@@ -39,12 +34,15 @@ def find_client_path() -> str:
         "C:\\Program Files\\Roblox\\Versions\\{version}",
     ]
     username = os.environ["USERPROFILE"].split("\\")[-1]
-    
+    with PoolManager() as pm:
+        version = pm.request("GET", "http://setup.roblox.com/version.txt") \
+            .data.decode("UTF-8").strip()
+
     for template in templates:
         path = template \
             .format(
                 username=username,
-                version=CLIENT_VERSION)
+                version=version)
         if os.path.exists(path):
             return path
 
@@ -67,9 +65,9 @@ class Client:
     process: subprocess.Popen
 
     def __init__(self, session: 'Session', place_id: int, job_id: str=None,
-        client_path: str=None):
+        client_path: str=find_client_path()):
         self.session = session
-        self.client_path = client_path or find_client_path()
+        self.client_path = client_path
         self.place_id = place_id
         self.job_id = job_id
         self.process = None
