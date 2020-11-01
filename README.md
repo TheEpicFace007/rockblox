@@ -29,6 +29,9 @@ client.close()
 
 # Documentation
 
+### Client(session: Roblox, place_id: int, job_id: None, client_path: None)
+Launches a new client instance.
+
 ### Client.wait_for(timeout=15, check_interval=0.25)
 Waits until the client is past the loading screen. It uses the screenshot method and therefore may not be 100% reliable.
 
