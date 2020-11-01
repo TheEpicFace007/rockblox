@@ -29,7 +29,7 @@ client.close()
 
 # Documentation
 
-### RobloxClient(session: Roblox, place_id: int, job_id: None, client_path: None)
+### RobloxClient(session, place_id, job_id=None, client_path=None)
 Launches a new client instance.
 
 ### RobloxClient.wait_for(timeout=15, check_interval=0.25)
