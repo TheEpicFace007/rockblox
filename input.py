@@ -233,6 +233,7 @@ def release_key(hexKeyCode):
     user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
 
 def bulk_press_and_release_key(s):
+    time.sleep(0.02)
     for k in s:
         code = VK_CODE.get(k.lower())
         if code:
