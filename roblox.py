@@ -68,8 +68,9 @@ class Client:
     place_id: int
     job_id: str
     hwnd: int
+    process: subprocess.Popen
 
-    def __init__(self, parent, place_id, job_id=None):
+    def __init__(self, parent: Roblox, place_id: int, job_id: str=None):
         self.parent = parent
         self.place_id = place_id
         self.job_id = job_id
