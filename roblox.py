@@ -24,7 +24,7 @@ with PoolManager() as pm:
         .data.decode("UTF-8").strip()
 
 
-def get_hwnds_for_pid(pid): # TODO: make this less bulkier
+def get_hwnds_for_pid(pid) -> list: # TODO: make this less bulkier
     def callback(hwnd, hwnds):
         if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
             _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
@@ -36,7 +36,7 @@ def get_hwnds_for_pid(pid): # TODO: make this less bulkier
     win32gui.EnumWindows(callback, hwnds)
     return hwnds
 
-def find_client_path():
+def find_client_path() -> str:
     templates = [
         "C:\\Users\\{username}\\AppData\\Local\\Roblox\\Versions\\{version}",
         "C:\\Program Files (x86)\\Roblox\\Versions\\{version}",
@@ -65,6 +65,9 @@ class RobloxClientMutex:
 
 class Client:
     redeem_url = "https://www.roblox.com/Login/Negotiate.ashx"
+    place_id: int
+    job_id: str
+    hwnd: int
 
     def __init__(self, parent, place_id, job_id=None):
         self.parent = parent
@@ -77,7 +80,7 @@ class Client:
     def __repr__(self):
         return f"Client for {self.parent}"
 
-    def build_joinscript_url(self):
+    def build_joinscript_url(self) -> str:
         pl_url = "https://assetgame.roblox.com/game/PlaceLauncher.ashx"
         if self.place_id and self.job_id:
             script_url = f"{pl_url}?request=RequestGameJob&browserTrackerId={self.parent.browser_tracker_id}&placeId={self.place_id}&gameId={self.job_id}&isPlayTogetherGame=false"
@@ -89,7 +92,7 @@ class Client:
     Uses the 'Presence Web-API' to check if the user is currently in-game.
     Can be used as a kind of "ping" to check if the client has disconnected from the game.
     """
-    def is_in_game(self, match_job_id=False):
+    def is_in_game(self, match_job_id: bool=False) -> bool:
         resp = self.parent.request(
             method="POST",
             url="https://presence.roblox.com/v1/presence/users",
@@ -103,7 +106,7 @@ class Client:
     """
     Waits until the client is past the loading screen.
     """
-    def wait_for(self, timeout=15, check_interval=0.25):
+    def wait_for(self, timeout: float=15, check_interval: float=0.25):
         t = time.time()
         
         while (time.time()-t) < timeout:
@@ -157,7 +160,7 @@ class Client:
         shell.SendKeys('%')
         win32gui.SetForegroundWindow(self.hwnd)
 
-    def size(self, xo=0, yo=0):
+    def size(self, xo=0, yo=0) -> tuple:
         rect = win32gui.GetWindowRect(self.hwnd)
         x = rect[0]
         y = rect[1]
@@ -165,7 +168,7 @@ class Client:
         h = rect[3] - y
         return (w-xo, h-yo)
 
-    def screenshot(self):
+    def screenshot(self) -> Image:
         dc_handle = win32gui.GetWindowDC(self.hwnd)
         dcObj=win32ui.CreateDCFromHandle(dc_handle)
         cDC=dcObj.CreateCompatibleDC()
@@ -185,7 +188,7 @@ class Client:
         win32gui.ReleaseDC(self.hwnd, dc_handle)
         return im.crop((11,45, *self.size(11, 11)))
 
-    def chat_message(self, message):
+    def chat_message(self, message: str):
         with client_lock:
             self.focus()
             press_key(0xBF)
@@ -197,7 +200,14 @@ class Client:
             time.sleep(0.05)
 
 class Roblox:
-    def __init__(self, ROBLOSECURITY=None, manager=None):
+    manager: PoolManager
+    csrf_token: str
+    browser_tracker_id: int
+    ROBLOSECURITY: str
+    id: int
+    name: str
+        
+    def __init__(self, ROBLOSECURITY: str=None, manager: PoolManager=None):
         self.manager = manager or PoolManager()
         self.csrf_token = None
         self.browser_tracker_id = random.randint(1, 1231324234)
@@ -207,13 +217,13 @@ class Roblox:
         if ROBLOSECURITY:
             self.auth_from_cookie(ROBLOSECURITY)
             
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.id:
             return self.name
         else:
             return "Unauthenticated"
 
-    def auth_from_cookie(self, ROBLOSECURITY):
+    def auth_from_cookie(self, ROBLOSECURITY: str):
         self.ROBLOSECURITY = ROBLOSECURITY
 
         auth_info = self.get_auth()
@@ -223,14 +233,14 @@ class Roblox:
         self.id = auth_info["id"]
         self.name = auth_info["name"]
 
-    def get_cookies(self, host):
+    def get_cookies(self, host: str) -> dict:
         cookies = {}
         if host.lower().endswith(".roblox.com"):
             if self.ROBLOSECURITY:
                 cookies[".ROBLOSECURITY"] = self.ROBLOSECURITY
         return cookies
     
-    def get_headers(self, method, host):
+    def get_headers(self, method: str, host: str) -> dict:
         headers = {}
         if host.lower().endswith(".roblox.com"):
             headers["Origin"] = "https://www.roblox.com"
@@ -241,11 +251,11 @@ class Roblox:
                     headers["X-CSRF-TOKEN"] = self.csrf_token
         return headers
 
-    def get_auth(self):
+    def get_auth(self) -> dict:
         r = self.request("GET", "https://users.roblox.com/v1/users/authenticated")
         return r.status == 200 and r.json()
     
-    def request(self, method, url, headers={}, data=None):
+    def request(self, method: str, url: str, headers: dict={}, data=None):
         purl = urlsplit(url)
         data = data and json.dumps(data, separators=(",",":"))
         headers.update(self.get_headers(method, purl.hostname))
@@ -267,5 +277,5 @@ class Roblox:
         resp.json = lambda: json.loads(resp.data)
         return resp
 
-    def create_client(self, place_id, job_id=None):
+    def create_client(self, place_id: int, job_id: str=None) -> Client:
         return Client(self, place_id, job_id)
