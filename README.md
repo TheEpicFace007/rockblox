@@ -31,7 +31,7 @@ client.close()
 ### Roblox(ROBLOSECURITY, manager=None)
 Creates a new session instance. The manager parameter accepts a urllib3.ProxyManager object, however, opened clients will not use this.
 
-### RobloxClient(session, place_id, job_id=None, client_path=None)
+### RobloxClient(session, place_id, job_id=None, client_path=default)
 Creates a new client instance.
 
 ### RobloxClient.wait_for(timeout=15, check_interval=0.25)
