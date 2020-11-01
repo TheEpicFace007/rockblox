@@ -66,8 +66,10 @@ class Client:
     hwnd: int
     process: subprocess.Popen
 
-    def __init__(self, parent: 'Session', place_id: int, job_id: str=None):
+    def __init__(self, parent: 'Session', place_id: int, job_id: str=None,
+        client_path: str=None):
         self.parent = parent
+        self.client_path = client_path or find_client_path()
         self.place_id = place_id
         self.job_id = job_id
         self.process = None
@@ -126,7 +128,7 @@ class Client:
         
         launch_time = int(time.time()*1000)
         self.process = subprocess.Popen([
-            find_client_path() + "\\RobloxPlayerBeta.exe",
+            self.client_path + "\\RobloxPlayerBeta.exe",
             "--play",
             "-a", self.redeem_url,
             "-t", auth_ticket,
