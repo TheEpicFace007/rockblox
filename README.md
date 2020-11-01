@@ -9,7 +9,7 @@ DM me if you know of a way to send keystrokes to the client, without focusing th
 
 # Usage
 ```python
-from roblox import Roblox, RobloxClientMutex
+from roblox import Roblox, RobloxClient, RobloxClientMutex
 from time import sleep
 
 mutex = RobloxClientMutex() # allows for multiple clients to be open at once
@@ -17,7 +17,7 @@ mutex = RobloxClientMutex() # allows for multiple clients to be open at once
 with open("cookie.txt") as f:
   session = Roblox(f.read().strip())
 
-client = session.create_client(1818) # second argument can be a jobId
+client = RobloxClient(session, 1818) # third argument can be a jobId
 client.wait_for(15) # wait up to 15 seconds for game to load
 
 client.chat_message("burger")
