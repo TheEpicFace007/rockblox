@@ -14,6 +14,7 @@ from time import sleep
 
 mutex = RobloxClientMutex() # allows for multiple clients to be open at once
 
+# create a new session using cookie.txt
 with open("cookie.txt") as f:
   session = Roblox(f.read().strip())
 
