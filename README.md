@@ -37,8 +37,8 @@ Takes control of the client mutex, so that multiple client instances can be open
 ### RobloxClient(session, place_id, job_id=None, client_path=default)
 Creates a new client instance.
 
-### RobloxClient.wait_for(timeout=15, check_interval=0.25)
-Waits until the client is past the loading screen. It uses the screenshot method and therefore may not be 100% reliable.
+### RobloxClient.wait_for(timeout=15, check_interval=0.25, ignore_colors=\[(45, 45, 45)])
+Waits until the client is past the loading screen. This uses the screenshot method and therefore may not be 100% reliable.
 
 ### RobloxClient.ping(match_place_id=True, match_job_id=False) -> bool
 Checks if the user is currently in-game using the presence web-api, can be used as a kind of "ping" to check if the client has disconnected from the game.
