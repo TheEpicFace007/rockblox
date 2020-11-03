@@ -97,7 +97,7 @@ class Session:
         if host.lower().endswith(".roblox.com"):
             headers["Origin"] = "https://www.roblox.com"
             headers["Referer"] = "https://www.roblox.com/"
-            if method == "POST":
+            if method in ["POST", "PATCH", "PUT", "DELETE"]:
                 headers["Content-Type"] = "application/json"
                 if self.csrf_token:
                     headers["X-CSRF-TOKEN"] = self.csrf_token
