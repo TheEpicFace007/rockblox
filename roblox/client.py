@@ -109,7 +109,8 @@ class Client:
     """
     Waits until the client is past the loading screen.
     """
-    def wait_for(self, timeout: float=15, check_interval: float=0.25):
+    def wait_for(self, timeout: float=15, check_interval: float=0.25,
+        loading_screen_color: tuple=(45, 45, 45)):
         start = time.time()
         
         while time.time()-start < timeout:
@@ -117,7 +118,7 @@ class Client:
             dominant_color = sorted(
                 screenshot.getcolors(screenshot.size[0]*screenshot.size[1]),
                 key=lambda t: t[0])[-1][1]
-            if dominant_color != (45, 45, 45):
+            if dominant_color != loading_screen_color:
                 return
             time.sleep(check_interval)
         
