@@ -89,7 +89,7 @@ class Session:
                 })
         return cookies
     
-    def get_headers(self, method: str, host: str) -> dict:
+    def get_headers(self, method: str, host: str, json: bool) -> dict:
         headers = {}
         headers.update({
             "User-Agent": self.user_agent
@@ -98,14 +98,17 @@ class Session:
             headers["Origin"] = "https://www.roblox.com"
             headers["Referer"] = "https://www.roblox.com/"
             if method in ["POST", "PATCH", "PUT", "DELETE"]:
-                headers["Content-Type"] = "application/json"
+                if json:
+                    headers["Content-Type"] = "application/json"
+                else:
+                    headers["Content-Type"] = "application/x-www-form-urlencoded"
                 if self.csrf_token:
                     headers["X-CSRF-TOKEN"] = self.csrf_token
         return headers
     
     def request(self, method: str, url: str, headers: dict={}, data=None, json=False):
         purl = urlsplit(url)
-        headers.update(self.get_headers(method, purl.hostname))
+        headers.update(self.get_headers(method, purl.hostname, json))
         cookies = self.get_cookies(purl.hostname)
         if cookies:
             headers["Cookie"] = "; ".join(f"{k}={v}" for k,v in cookies.items() if v != None)
