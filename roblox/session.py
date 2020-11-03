@@ -50,7 +50,7 @@ class Session:
         self.GuestData = index_resp.cookies["GuestData"]
         self.RBXSource = index_resp.cookies["RBXSource"]
         self.RBXEventTrackerV2 = index_resp.cookies["RBXEventTrackerV2"]
-        self.browser_tracker_id = int(re.search("browserid=(\d+?)",
+        self.browser_tracker_id = int(re.search(r"browserid=(\d+?)",
                                                 self.RBXEventTrackerV2) \
                                                 .group(1))
         self.RBXViralAcquisition = index_resp.cookies["RBXViralAcquisition"]
