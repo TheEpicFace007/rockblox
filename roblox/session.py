@@ -15,10 +15,20 @@ class Session:
     def __init__(self, ROBLOSECURITY: str=None, manager: PoolManager=None):
         self.manager = manager or PoolManager()
         self.csrf_token = None
-        self.browser_tracker_id = random.randint(1, 1231324234)
+        self.browser_tracker_id = None
+
+        self.RBXImageCache = None
+        self.GuestData = None
+        self.RBXSource = None
+        self.RBXEventTrackerV2 = None
+        self.RBXViralAcquisition = None
         self.ROBLOSECURITY = None
+
         self.id = None
         self.name = None
+
+        self.setup()
+
         if ROBLOSECURITY:
             self.auth_from_cookie(ROBLOSECURITY)
             
@@ -27,6 +37,15 @@ class Session:
             return self.name
         else:
             return "Unauthenticated"
+            
+    def setup(self):
+        index_resp = self.request("GET", "https://www.roblox.com/")
+        self.GuestData = index_resp.cookies["GuestData"]
+        self.RBXSource = index_resp.cookies["RBXSource"]
+        self.RBXEventTrackerV2 = index_resp.cookies["RBXEventTrackerV2"]
+        self.RBXViralAcquisition = index_resp.cookies["RBXViralAcquisition"]
+        timg_resp = self.request("GET", "https://www.roblox.com/timg/rbx")
+        self.RBXImageCache = timg_resp.cookies["RBXImageCache"]
 
     def auth_from_cookie(self, ROBLOSECURITY: str):
         self.ROBLOSECURITY = ROBLOSECURITY
@@ -42,7 +61,14 @@ class Session:
         cookies = {}
         if host.lower().endswith(".roblox.com"):
             if self.ROBLOSECURITY:
-                cookies[".ROBLOSECURITY"] = self.ROBLOSECURITY
+                cookies.update({
+                    ".ROBLOSECURITY": self.ROBLOSECURITY,
+                    "RBXImageCache": self.RBXImageCache,
+                    "GuestData": self.GuestData,
+                    "RBXSource": self.RBXSource,
+                    "RBXEventTrackerV2": self.RBXEventTrackerV2,
+                    "RBXViralAcquisition": self.RBXViralAcquisition
+                })
         return cookies
     
     def get_headers(self, method: str, host: str) -> dict:
@@ -79,5 +105,10 @@ class Session:
             self.csrf_token = resp.headers["x-csrf-token"]
             return self.request(method, url, headers, data)
 
+        resp.cookies = {
+            cv.split("=")[0]: cv.split(";")[0].split("=", 2)[1]
+            for cn, cv in resp.cookies.items()
+            if cn == "set-cookie"
+        }
         resp.json = lambda: json.loads(resp.data)
         return resp

@@ -15,17 +15,18 @@ import os
 client_lock = Lock() # used to limit certain interactions to one client at a time
 shell = win32com.client.Dispatch("WScript.Shell") # setforeground needs this for some reason
 
-def get_hwnds_for_pid(pid) -> list: # TODO: make this less bulkier
+def get_hwnd_for_pid(pid) -> int:
     def callback(hwnd, hwnds):
         if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
             _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
             if found_pid == pid:
                 hwnds.append(hwnd)
+                return False
         return True
         
     hwnds = []
     win32gui.EnumWindows(callback, hwnds)
-    return hwnds
+    return hwnds and hwnds[0]
 
 def find_client_path() -> str:
     templates = [
@@ -115,8 +116,9 @@ class Client:
         
         while time.time()-start < timeout:
             screenshot = self.screenshot()
+            px_count = 100 #screenshot.size[0]*screenshot.size[1]
             dominant_color = sorted(
-                screenshot.getcolors(screenshot.size[0]*screenshot.size[1]),
+                screenshot.getcolors(px_count),
                 key=lambda t: t[0])[-1][1]
             if not dominant_color in ignored_colors:
                 return
@@ -131,24 +133,23 @@ class Client:
         auth_ticket = self.session.request("POST", "https://auth.roblox.com/v1/authentication-ticket") \
             .headers["rbx-authentication-ticket"]
         
-        launch_time = int(time.time()*1000)
         self.process = subprocess.Popen([
-            self.client_path + "\\RobloxPlayerBeta.exe",
+            os.path.join(self.client_path, "RobloxPlayerBeta.exe"),
             "--play",
             "-a", self.redeem_url,
             "-t", auth_ticket,
             "-j", self.build_joinscript_url(),
             "-b", str(self.session.browser_tracker_id),
-            "--launchtime=" + str(launch_time),
+            f"--launchtime={int(time.time()*1000)}",
             "--rloc", "en_us",
             "--gloc", "en_us"
         ])
 
         start = time.time()
         while time.time()-start < 5:
-            hwnds = get_hwnds_for_pid(self.process.pid)
-            if hwnds:
-                self.hwnd = hwnds[0]
+            hwnd = get_hwnd_for_pid(self.process.pid)
+            if hwnd:
+                self.hwnd = hwnd
                 break
         
         if not self.hwnd:
