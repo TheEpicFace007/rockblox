@@ -18,15 +18,13 @@ mutex = RobloxClientMutex() # allows for multiple clients to be open at once
 with open("cookie.txt") as f:
   session = Roblox(f.read().strip())
 
-client = RobloxClient(session, 1818) # third argument can be a jobId
-client.wait_for(15) # wait up to 15 seconds for game to load
+with RobloxClient(session, 1818) as client: # third argument can be a jobId
+  client.wait_for(15) # wait up to 15 seconds for game to load
 
-client.chat_message("burger")
-sleep(1)
+  client.chat_message("burger")
+  sleep(1)
 
-client.screenshot().show()
-
-client.close()
+  client.screenshot().show()
 ```
 
 # Documentation
