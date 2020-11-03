@@ -29,6 +29,7 @@ class Session:
         self.RBXSource = None
         self.RBXEventTrackerV2 = None
         self.RBXViralAcquisition = None
+        self.RBXSessionTracker = None
         self.ROBLOSECURITY = None
 
         self.id = None
@@ -68,17 +69,23 @@ class Session:
         self.id = auth_info["id"]
         self.name = auth_info["name"]
 
+        tos_resp = self.request("GET", "https://www.roblox.com/usercheck/show-tos?isLicensingTermsCheckNeeded=False",
+                                headers={"accept-language": "en-US,en;q=0.9"})
+        self.RBXSessionTracker = tos_resp.cookies["RBXSessionTracker"]
+
     def get_cookies(self, host: str) -> dict:
         cookies = {}
         if host.lower().endswith(".roblox.com"):
             if self.ROBLOSECURITY:
                 cookies.update({
                     ".ROBLOSECURITY": self.ROBLOSECURITY,
-                    "RBXImageCache": self.RBXImageCache,
                     "GuestData": self.GuestData,
                     "RBXSource": self.RBXSource,
+                    "RBXImageCache": self.RBXImageCache,
                     "RBXEventTrackerV2": self.RBXEventTrackerV2,
-                    "RBXViralAcquisition": self.RBXViralAcquisition
+                    "RBXViralAcquisition": self.RBXViralAcquisition,
+                    "RBXSessionTracker": self.RBXSessionTracker,
+                    "rbx-ip2": ""
                 })
         return cookies
     
@@ -101,7 +108,7 @@ class Session:
         headers.update(self.get_headers(method, purl.hostname))
         cookies = self.get_cookies(purl.hostname)
         if cookies:
-            headers["Cookie"] = "; ".join(f"{k}={v}" for k,v in cookies.items())
+            headers["Cookie"] = "; ".join(f"{k}={v}" for k,v in cookies.items() if v != None)
 
         if data and not type(data) in [str, bytes]:
             if json:
