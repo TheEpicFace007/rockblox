@@ -35,6 +35,9 @@ Creates a new session instance. The manager parameter accepts a urllib3.ProxyMan
 ### RobloxClient(session, place_id, job_id=None, client_path=default)
 Creates a new client instance.
 
+### RobloxClientMutex()
+Takes control of the client mutex, so that multiple client instances can be open at the same time. Won't work if an instance is already open before it is called.
+
 ### RobloxClient.wait_for(timeout=15, check_interval=0.25)
 Waits until the client is past the loading screen. It uses the screenshot method and therefore may not be 100% reliable.
 
