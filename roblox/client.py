@@ -73,6 +73,12 @@ class Client:
         self.process = None
         self.hwnd = None
         self.start()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.close()
     
     def __repr__(self):
         return f"Client for {self.session}"
