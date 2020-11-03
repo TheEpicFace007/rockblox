@@ -25,6 +25,7 @@ client.chat_message("burger")
 sleep(1)
 
 client.screenshot().show()
+
 client.close()
 ```
 
