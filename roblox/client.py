@@ -39,10 +39,9 @@ def find_client_path() -> str:
             .data.decode("UTF-8").strip()
 
     for template in templates:
-        path = template \
-            .format(
-                username=username,
-                version=version)
+        path = template.format(
+            username=username,
+            version=version)
         if os.path.exists(path):
             return path
 
@@ -104,13 +103,13 @@ class Client:
     Waits until the client is past the loading screen.
     """
     def wait_for(self, timeout: float=15, check_interval: float=0.25):
-        t = time.time()
+        start = time.time()
         
-        while (time.time()-t) < timeout:
+        while time.time()-start < timeout:
             screenshot = self.screenshot()
-            pixels = screenshot.getcolors(screenshot.size[0]*screenshot.size[1])
-            sorted_pixels = sorted(pixels, key=lambda t: t[0])
-            dominant_color = sorted_pixels[-1][1]
+            dominant_color = sorted(
+                screenshot.getcolors(screenshot.size[0]*screenshot.size[1]),
+                key=lambda t: t[0])[-1][1]
             if dominant_color != (45, 45, 45):
                 return
             time.sleep(check_interval)
@@ -137,8 +136,8 @@ class Client:
             "--gloc", "en_us"
         ])
 
-        start_time = time.time()
-        while (time.time()-start_time) < 5:
+        start = time.time()
+        while time.time()-start < 5:
             hwnds = get_hwnds_for_pid(self.process.pid)
             if hwnds:
                 self.hwnd = hwnds[0]
@@ -186,7 +185,7 @@ class Client:
         cDC.DeleteDC()
         win32gui.DeleteObject(dataBitMap.GetHandle())
         win32gui.ReleaseDC(self.hwnd, dc_handle)
-        return im.crop((11,45, *self.size(11, 11)))
+        return im.crop((11,45, *self.size(11, 11))) # crop borders
     
     """
     Attempts to write and send a chat message by simulating keystrokes
