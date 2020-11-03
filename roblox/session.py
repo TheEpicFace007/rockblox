@@ -60,10 +60,11 @@ class Session:
     def auth_from_cookie(self, ROBLOSECURITY: str):
         self.ROBLOSECURITY = ROBLOSECURITY
 
-        auth_info = self.get_auth()
-        if not auth_info:
+        auth_resp = self.request("GET", "https://users.roblox.com/v1/users/authenticated")
+        if auth_resp.status != 200:
             raise Exception("Invalid or expired .ROBLOSECURITY cookie")
-
+        
+        auth_info = auth_resp.json()
         self.id = auth_info["id"]
         self.name = auth_info["name"]
 
@@ -94,10 +95,6 @@ class Session:
                 if self.csrf_token:
                     headers["X-CSRF-TOKEN"] = self.csrf_token
         return headers
-
-    def get_auth(self) -> dict:
-        r = self.request("GET", "https://users.roblox.com/v1/users/authenticated")
-        return r.status == 200 and r.json()
     
     def request(self, method: str, url: str, headers: dict={}, data=None, json=False):
         purl = urlsplit(url)
