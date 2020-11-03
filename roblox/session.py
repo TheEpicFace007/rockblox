@@ -1,8 +1,12 @@
 from urllib3 import PoolManager
-from urllib.parse import urlsplit
+from urllib.parse import urlsplit, urlencode
 import json
 import time
 import random
+import re
+
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
+_json = json
 
 class Session:
     manager: PoolManager
@@ -12,8 +16,11 @@ class Session:
     id: int
     name: str
         
-    def __init__(self, ROBLOSECURITY: str=None, manager: PoolManager=None):
+    def __init__(self, ROBLOSECURITY: str=None, manager: PoolManager=None,
+                 user_agent=USER_AGENT):
         self.manager = manager or PoolManager()
+        self.user_agent = user_agent
+
         self.csrf_token = None
         self.browser_tracker_id = None
 
@@ -28,7 +35,6 @@ class Session:
         self.name = None
 
         self.setup()
-
         if ROBLOSECURITY:
             self.auth_from_cookie(ROBLOSECURITY)
             
@@ -39,10 +45,14 @@ class Session:
             return "Unauthenticated"
             
     def setup(self):
-        index_resp = self.request("GET", "https://www.roblox.com/")
+        index_resp = self.request("GET", "https://www.roblox.com/",
+                                  headers={"accept-language": "en-US,en;q=0.9"})
         self.GuestData = index_resp.cookies["GuestData"]
         self.RBXSource = index_resp.cookies["RBXSource"]
         self.RBXEventTrackerV2 = index_resp.cookies["RBXEventTrackerV2"]
+        self.browser_tracker_id = int(re.search("browserid=(\d+?)",
+                                                self.RBXEventTrackerV2) \
+                                                .group(1))
         self.RBXViralAcquisition = index_resp.cookies["RBXViralAcquisition"]
         timg_resp = self.request("GET", "https://www.roblox.com/timg/rbx")
         self.RBXImageCache = timg_resp.cookies["RBXImageCache"]
@@ -73,6 +83,9 @@ class Session:
     
     def get_headers(self, method: str, host: str) -> dict:
         headers = {}
+        headers.update({
+            "User-Agent": self.user_agent
+        })
         if host.lower().endswith(".roblox.com"):
             headers["Origin"] = "https://www.roblox.com"
             headers["Referer"] = "https://www.roblox.com/"
@@ -86,14 +99,19 @@ class Session:
         r = self.request("GET", "https://users.roblox.com/v1/users/authenticated")
         return r.status == 200 and r.json()
     
-    def request(self, method: str, url: str, headers: dict={}, data=None):
+    def request(self, method: str, url: str, headers: dict={}, data=None, json=False):
         purl = urlsplit(url)
-        data = data and json.dumps(data, separators=(",",":"))
         headers.update(self.get_headers(method, purl.hostname))
         cookies = self.get_cookies(purl.hostname)
         if cookies:
             headers["Cookie"] = "; ".join(f"{k}={v}" for k,v in cookies.items())
 
+        if data and not type(data) in [str, bytes]:
+            if json:
+                data = _json.dumps(data, separators=(",",":"))
+            else:
+                data = urlencode(data)
+    
         resp = self.manager.request(
             method=method,
             url=url,
@@ -106,9 +124,9 @@ class Session:
             return self.request(method, url, headers, data)
 
         resp.cookies = {
-            cv.split("=")[0]: cv.split(";")[0].split("=", 2)[1]
-            for cn, cv in resp.cookies.items()
+            cv.split("=")[0]: cv.split(";")[0].split("=", 1)[1]
+            for cn, cv in resp.headers.items()
             if cn == "set-cookie"
         }
-        resp.json = lambda: json.loads(resp.data)
+        resp.json = lambda: _json.loads(resp.data)
         return resp

@@ -21,7 +21,7 @@ def get_hwnd_for_pid(pid) -> int:
             _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
             if found_pid == pid:
                 hwnds.append(hwnd)
-                return False
+                #return False
         return True
         
     hwnds = []
@@ -91,18 +91,20 @@ class Client:
     """
     def ping(self, match_place_id: bool=True, match_job_id: bool=False) -> bool:
         resp = self.session.request(
-            method="POST",
-            url="https://presence.roblox.com/v1/presence/users",
-            data={"userIds": [self.session.id]}
+            method="GET",
+            url=f"https://api.roblox.com/users/{self.session.id}/onlinestatus",
         )
-        presence = resp.json()["userPresences"][0]
+        presence = resp.json()
+
+        if not presence["PlaceId"]:
+            return False
         
         if match_place_id \
-            and presence["placeId"] != self.place_id:
+            and presence["PlaceId"] != self.place_id:
             return False
         
         if match_job_id \
-            and presence["gameId"] != self.job_id:
+            and presence["GameId"] != self.job_id:
             return False
         
         return True
@@ -116,7 +118,7 @@ class Client:
         
         while time.time()-start < timeout:
             screenshot = self.screenshot()
-            px_count = 100 #screenshot.size[0]*screenshot.size[1]
+            px_count = screenshot.size[0]*screenshot.size[1]
             dominant_color = sorted(
                 screenshot.getcolors(px_count),
                 key=lambda t: t[0])[-1][1]
