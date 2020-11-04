@@ -121,7 +121,7 @@ class Client:
     Waits until the client is past the loading screen.
     """
     def wait_for(self, timeout: float=15, check_interval: float=0.25,
-        ignored_colors: list=[(45, 45, 45)]):
+        ignored_colors: list=[(45, 45, 45), (255, 255, 255)]):
         start = time.time()
         
         while time.time()-start < timeout:
@@ -165,7 +165,7 @@ class Client:
         if not self.hwnd:
             self.close()
             raise TimeoutError("Timed out while getting window")
-        
+
     def close(self):
         self.process.kill()
 
