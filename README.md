@@ -12,7 +12,7 @@ DM me if you know of a way to send keystrokes to the client, without focusing th
 from roblox import Roblox, RobloxClient, RobloxClientMutex
 from time import sleep
 
-mutex = RobloxClientMutex() # allows for multiple clients to be open at once
+mutex = RobloxClientMutex() # allows multiple clients to be open at once
 
 # create new session using cookie.txt
 with open("cookie.txt") as f:
