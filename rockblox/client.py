@@ -65,7 +65,7 @@ class Client:
     process: subprocess.Popen
 
     def __init__(self, session: 'Session', place_id: int, job_id: str=None,
-        client_path: str=find_client_path()):
+        size=(100,100), client_path: str=find_client_path()):
         if not session.id:
             raise("Session is not authenticated")
         self.session = session
@@ -75,6 +75,7 @@ class Client:
         self.process = None
         self.hwnd = None
         self.start()
+        self.resize(size)
 
     def __enter__(self):
         return self
@@ -170,8 +171,14 @@ class Client:
         self.process.kill()
 
     def focus(self):
+        if ctypes.windll.user32.GetActiveWindow() == self.hwnd:
+            return
         shell.SendKeys('%')
         win32gui.SetForegroundWindow(self.hwnd)
+
+    def resize(self, size):
+        with client_lock:
+            win32gui.MoveWindow(self.hwnd, *win32gui.GetWindowRect(self.hwnd)[:2], *size, True)
 
     def size(self, xo=0, yo=0) -> tuple:
         rect = win32gui.GetWindowRect(self.hwnd)
