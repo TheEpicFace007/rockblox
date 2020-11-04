@@ -219,9 +219,9 @@ class Client:
         with client_lock:
             self.focus()
             win32api.SendMessage(self.hwnd, win32con.WM_CHAR, ord("/"), 0)
-            time.sleep(0.03)
+            time.sleep(0.1)
             for c in message:
                 win32api.SendMessage(self.hwnd, win32con.WM_CHAR, ord(c), 0)
-            time.sleep(0.03)
+            time.sleep(0.1)
             press_key(0x0D)
             release_key(0x0D)
