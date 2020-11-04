@@ -165,9 +165,7 @@ class Client:
         if not self.hwnd:
             self.close()
             raise TimeoutError("Timed out while getting window")
-
-        time.sleep(1)
-
+        
     def close(self):
         self.process.kill()
 
