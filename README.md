@@ -1,4 +1,4 @@
-# roblox
+# rockblox
 Python Roblox wrapper, primarily focused on the game client.
 
 Since this module doesn't directly hook into the client, it is limited by the following things:
