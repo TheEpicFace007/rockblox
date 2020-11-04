@@ -7,6 +7,11 @@ Since this module doesn't directly hook into the client, it is limited by the fo
 
 DM me if you know of a way to send keystrokes to the client, without focusing the window.
 
+# Setup
+```bash
+pip install git+https://github.com/davidbaszucki/rockblox.git
+```
+
 # Usage
 ```python
 from rockblox import Roblox, RobloxClient, RobloxClientMutex
