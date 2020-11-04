@@ -1,6 +1,8 @@
 import ctypes
 from ctypes import wintypes
 import time
+import win32api
+import win32con
 
 user32 = ctypes.WinDLL('user32', use_last_error=True)
 
@@ -232,12 +234,8 @@ def release_key(hexKeyCode):
                             dwFlags=KEYEVENTF_KEYUP))
     user32.SendInput(1, ctypes.byref(x), ctypes.sizeof(x))
 
-def bulk_press_and_release_key(s):
+def bulk_press_and_release_key(s, hwnd):
     time.sleep(0.02)
     for k in s:
-        code = VK_CODE.get(k.lower())
-        if code:
-            press_key(code)
-            release_key(code)
-            time.sleep(0.01)
+        win32api.PostMessage(hwnd, win32con.WM_CHAR, ord(k), 0)
     time.sleep(0.01)

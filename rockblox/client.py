@@ -11,6 +11,7 @@ import win32com.client
 import subprocess
 import time
 import os
+import win32api
 
 client_lock = Lock() # used to limit certain interactions to one client at a time
 shell = win32com.client.Dispatch("WScript.Shell") # setforeground needs this for some reason
@@ -217,10 +218,10 @@ class Client:
     def chat_message(self, message: str):
         with client_lock:
             self.focus()
-            press_key(0xBF)
-            release_key(0xBF)
-            time.sleep(0.05)
-            bulk_press_and_release_key(message)
+            win32api.SendMessage(self.hwnd, win32con.WM_CHAR, ord("/"), 0)
+            time.sleep(0.03)
+            for c in message:
+                win32api.SendMessage(self.hwnd, win32con.WM_CHAR, ord(c), 0)
+            time.sleep(0.03)
             press_key(0x0D)
             release_key(0x0D)
-            time.sleep(0.05)
