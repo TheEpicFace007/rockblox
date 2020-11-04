@@ -9,7 +9,7 @@ DM me if you know of a way to send keystrokes to the client, without focusing th
 
 # Usage
 ```python
-from roblox import Roblox, RobloxClient, RobloxClientMutex
+from rockblox import Roblox, RobloxClient, RobloxClientMutex
 from time import sleep
 
 mutex = RobloxClientMutex() # allows multiple clients to be open at once
