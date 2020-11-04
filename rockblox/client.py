@@ -66,6 +66,8 @@ class Client:
 
     def __init__(self, session: 'Session', place_id: int, job_id: str=None,
         client_path: str=find_client_path()):
+        if not session.id:
+            raise("Session is not authenticated")
         self.session = session
         self.client_path = client_path
         self.place_id = place_id
