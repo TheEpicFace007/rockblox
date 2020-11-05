@@ -52,11 +52,13 @@ class Session:
         self.RBXSource = index_resp.cookies["RBXSource"]
         self.RBXViralAcquisition = index_resp.cookies.get("RBXViralAcquisition")
         self.RBXEventTrackerV2 = index_resp.cookies.get("RBXEventTrackerV2")
-        self.browser_tracker_id = int(re.search(r"browserid=(\d+?)",
-                                                self.RBXEventTrackerV2) \
-                                                .group(1))
         timg_resp = self.request("GET", "https://www.roblox.com/timg/rbx")
         self.RBXImageCache = timg_resp.cookies["RBXImageCache"]
+
+        if self.RBXEventTrackerV2:
+            self.browser_tracker_id = int(re.search(r"browserid=(\d+?)",
+                                                    self.RBXEventTrackerV2) \
+                                                    .group(1))
 
     def auth_from_cookie(self, ROBLOSECURITY: str):
         self.ROBLOSECURITY = ROBLOSECURITY
