@@ -30,6 +30,7 @@ class Session:
         self.RBXEventTrackerV2 = None
         self.RBXViralAcquisition = None
         self.RBXSessionTracker = None
+        self.RequestVerificationToken = None
         self.ROBLOSECURITY = None
 
         self.id = None
@@ -87,6 +88,7 @@ class Session:
                     "RBXEventTrackerV2": self.RBXEventTrackerV2,
                     "RBXViralAcquisition": self.RBXViralAcquisition,
                     "RBXSessionTracker": self.RBXSessionTracker,
+                    "__RequestVerificationToken": self.RequestVerificationToken,
                     "rbx-ip2": ""
                 })
         return cookies
@@ -109,6 +111,10 @@ class Session:
                 if self.csrf_token:
                     headers["X-CSRF-TOKEN"] = self.csrf_token
         return headers
+
+    def _on_response(self, resp):
+        if "__RequestVerificationToken" in resp.cookies:
+            self.RequestVerificationToken = resp.cookies["__RequestVerificationToken"]
     
     def request(self, method: str, url: str, headers: dict={}, data=None, mode="json"):
         purl = urlsplit(url)
@@ -141,4 +147,5 @@ class Session:
             if cn == "set-cookie"
         }
         resp.json = lambda: _json.loads(resp.data)
+        self._on_response(resp)
         return resp
