@@ -1,4 +1,4 @@
-from urllib3 import PoolManager
+from urllib3 import PoolManager, Retry
 from urllib.parse import urlsplit, urlencode
 import json
 import time
@@ -127,7 +127,8 @@ class Session:
             method=method,
             url=url,
             headers=headers,
-            body=data
+            body=data,
+            retries=Retry(redirects=False)
         )
 
         if "x-csrf-token" in resp.headers:
