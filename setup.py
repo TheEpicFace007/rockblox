@@ -11,7 +11,7 @@ setuptools.setup(
     description="Roblox wrapper, with support for the game client",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/davidbaszucki/rockblox",
+    url="https://github.com/h0nde/rockblox",
     packages=setuptools.find_packages(),
     classifiers=[
     ],
