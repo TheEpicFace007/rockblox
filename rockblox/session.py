@@ -50,7 +50,7 @@ class Session:
                                   headers={"accept-language": "en-US,en;q=0.9"})
         self.GuestData = index_resp.cookies["GuestData"]
         self.RBXSource = index_resp.cookies["RBXSource"]
-        self.RBXViralAcquisition = index_resp.cookies["RBXViralAcquisition"]
+        self.RBXViralAcquisition = index_resp.cookies.get("RBXViralAcquisition")
         self.RBXEventTrackerV2 = index_resp.cookies["RBXEventTrackerV2"]
         self.browser_tracker_id = int(re.search(r"browserid=(\d+?)",
                                                 self.RBXEventTrackerV2) \
