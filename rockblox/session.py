@@ -128,7 +128,7 @@ class Session:
             url=url,
             headers=headers,
             body=data,
-            retries=Retry(redirects=False)
+            retries=Retry(redirect=False)
         )
 
         if "x-csrf-token" in resp.headers:
