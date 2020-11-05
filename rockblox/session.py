@@ -89,7 +89,7 @@ class Session:
                 })
         return cookies
     
-    def get_headers(self, method: str, host: str, json: bool) -> dict:
+    def get_headers(self, method: str, host: str, mode: str) -> dict:
         headers = {}
         headers.update({
             "User-Agent": self.user_agent
@@ -98,25 +98,27 @@ class Session:
             headers["Origin"] = "https://www.roblox.com"
             headers["Referer"] = "https://www.roblox.com/"
             if method in ["POST", "PATCH", "PUT", "DELETE"]:
-                if json:
+                if mode == "json":
                     headers["Content-Type"] = "application/json"
-                else:
+                elif mode == "url":
                     headers["Content-Type"] = "application/x-www-form-urlencoded"
+                elif mode == "xml":
+                    headers["Content-Type"] = "text/xml"
                 if self.csrf_token:
                     headers["X-CSRF-TOKEN"] = self.csrf_token
         return headers
     
-    def request(self, method: str, url: str, headers: dict={}, data=None, json=False):
+    def request(self, method: str, url: str, headers: dict={}, data=None, mode="json"):
         purl = urlsplit(url)
-        headers.update(self.get_headers(method, purl.hostname, json))
+        headers.update(self.get_headers(method, purl.hostname, mode))
         cookies = self.get_cookies(purl.hostname)
         if cookies:
             headers["Cookie"] = "; ".join(f"{k}={v}" for k,v in cookies.items() if v != None)
 
         if data and not type(data) in [str, bytes]:
-            if json:
+            if mode == "json":
                 data = _json.dumps(data, separators=(",",":"))
-            else:
+            elif mode == "url":
                 data = urlencode(data)
     
         resp = self.manager.request(
