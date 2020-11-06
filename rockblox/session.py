@@ -79,7 +79,13 @@ class Session:
         auth_info = auth_resp.json()
         self.id = auth_info["id"]
         self.name = auth_info["name"]
-        self.request("GET", self.build_url("www", "/home"))
+
+        # visit homepage to grab initial csrf token, in a natural way
+        with self.request("GET", self.build_url("www", "/home")) as resp:
+            self.csrf_token = re.search(
+                r"Roblox\.XsrfToken\.setToken\('(.+?)'\)",
+                resp.text
+            ).group(1)
 
     """
     Gather tracking cookies from pages that a real browser would visit
