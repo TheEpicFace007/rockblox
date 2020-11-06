@@ -1,4 +1,4 @@
-from .exceptions import WebError, ErrorType, InvalidCredentials
+from .exceptions import WebError, WebErrorType, InvalidCredentials
 from urllib.parse import urlsplit
 import requests
 import re
@@ -147,7 +147,7 @@ class Session:
             self._process_response(resp)
         except WebError as err:
             # mismatching csrf token, re-send request
-            if err.type() == ErrorType.INVALID_XSRF:
+            if err.type() == WebErrorType.INVALID_XSRF:
                 resp = wrap()
             else:
                 raise

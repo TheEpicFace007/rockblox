@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-class ErrorType(Enum):
+class WebErrorType(Enum):
     INVALID_XSRF = auto()
     UNAUTHENTICATED = auto()
     ENDPOINT_SPECIFIC = auto()
