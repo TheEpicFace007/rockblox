@@ -1,4 +1,4 @@
-from .exceptions import WebError, WebErrorType, InvalidCredentials
+from .exceptions import WebError, WebErrorType
 from urllib.parse import urlsplit
 import requests
 import re
