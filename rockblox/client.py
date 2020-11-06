@@ -87,6 +87,9 @@ class Client:
     def __repr__(self):
         return f"Client for {self.session}"
 
+    """
+    Build joinscript URL based on initial parameters
+    """
     def build_joinscript_url(self) -> str:
         pl_url = "https://assetgame.roblox.com/game/PlaceLauncher.ashx"
         if self.place_id and self.job_id:
@@ -137,7 +140,10 @@ class Client:
             time.sleep(check_interval)
         
         raise TimeoutError
-        
+    
+    """
+    Launch the RobloxPlayerBeta.exe process, and wait for it's window to spawn
+    """
     def start(self):
         if self.process:
             raise Exception(".start() has already been called")
@@ -168,19 +174,31 @@ class Client:
             self.close()
             raise TimeoutError("Timed out while getting window")
 
+    """
+    Kill the client process
+    """
     def close(self):
         self.process.kill()
 
+    """
+    Focus the client window
+    """
     def focus(self):
         if ctypes.windll.user32.GetActiveWindow() == self.hwnd:
             return
         shell.SendKeys('%')
         win32gui.SetForegroundWindow(self.hwnd)
 
+    """
+    Resize the client window
+    """
     def resize(self, size):
         with client_lock:
             win32gui.MoveWindow(self.hwnd, *win32gui.GetWindowRect(self.hwnd)[:2], *size, True)
 
+    """
+    Get client window size
+    """
     def size(self, xo=0, yo=0) -> tuple:
         rect = win32gui.GetWindowRect(self.hwnd)
         x = rect[0]
