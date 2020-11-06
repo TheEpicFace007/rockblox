@@ -31,8 +31,8 @@ with RobloxClient(session, 1818) as client:
 ```
 
 # Documentation
-### Roblox(ROBLOSECURITY, manager=None)
-Creates a new session instance. The manager parameter accepts a urllib3.ProxyManager object, however, opened clients will not use this.
+### Roblox(ROBLOSECURITY, requests_session=None, user_agent=DEFAULT, host="roblox.com")
+Creates a new session instance.
 
 ### RobloxClientMutex()
 Takes control of the client mutex, so that multiple client instances can be open at the same time. Won't work if an instance is already open before it is called.
