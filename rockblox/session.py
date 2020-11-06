@@ -95,7 +95,7 @@ class Session:
         if host.lower().endswith(f".{self.host}"):
             headers["Origin"] = self.build_url("www")
             headers["Referer"] = self.build_url("www", "/")
-            if method in ["POST", "PATCH", "PUT", "DELETE"]:
+            if method in ["POST", "PATCH", "DELETE", "PUT"]:
                 if self.csrf_token:
                     headers["X-CSRF-TOKEN"] = self.csrf_token
         return headers
