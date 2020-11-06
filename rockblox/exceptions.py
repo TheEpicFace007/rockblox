@@ -25,7 +25,7 @@ class WebError(Exception):
 
     def type(self):
         if self.status == 429:
-                return WebErrorType.TOO_MANY_REQUESTS
+            return WebErrorType.TOO_MANY_REQUESTS
         
         if self.code == 0:
             if self.status == 403:
