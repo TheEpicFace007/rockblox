@@ -18,6 +18,6 @@ setuptools.setup(
     install_requires=[
        'pywin32',
        'pillow'
-    ]
+    ],
     python_requires='>=3.6',
 )
