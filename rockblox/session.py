@@ -91,7 +91,7 @@ class Session:
     """
     Build dict of headers based on method, host and extra headers
     """
-    def get_headers(self, method: str, host: str, headers: dict={}) -> dict:
+    def build_headers(self, method: str, host: str, headers: dict={}) -> dict:
         if host.lower().endswith(f".{self.host}"):
             headers["Origin"] = self.build_url("www")
             headers["Referer"] = self.build_url("www", "/")
@@ -125,7 +125,7 @@ class Session:
                 allow_redirects: bool=False, proxies: dict=None):
         def wrap():
             parsed_url = urlsplit(url)
-            headers.update(self.get_headers(method, parsed_url.hostname))
+            headers.update(self.build_headers(method, parsed_url.hostname))
 
             resp = self.requests_session.request(
                 method=method,
