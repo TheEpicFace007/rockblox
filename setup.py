@@ -15,7 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
     ],
-    install_requires=[
+    extras_require=[
        'pywin32',
        'pillow'
     ],
