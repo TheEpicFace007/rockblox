@@ -47,14 +47,14 @@ class Session:
             return "Unauthenticated"
 
     """
-    Gathers tracking cookies from pages that a real browser would visit
+    Gather tracking cookies from pages that a real browser would visit
     """
     def _session_setup(self):
         self.request("GET", self.build_url("www", "/"))
         self.request("GET", self.build_url("www", "/timg/rbx"))
 
     """
-    Returns browser tracking ID from RBXEventTrackerV2 cookie
+    Return browser tracking ID from RBXEventTrackerV2 cookie
     """
     @property
     def browser_id(self):
