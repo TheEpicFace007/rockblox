@@ -71,7 +71,9 @@ class Session:
         self.cookies.set(
             domain=f".{self.host}", name=".ROBLOSECURITY", value=ROBLOSECURITY,
             secure=True)
+        self._auth_setup()
 
+    def _auth_setup(self):
         with self.request("GET",
             self.build_url("users", "/v1/users/authenticated")) as resp:
             if not resp.ok:
