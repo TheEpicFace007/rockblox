@@ -83,7 +83,7 @@ class Session:
         # visit homepage to grab initial csrf token, in a natural way
         with self.request("GET", self.build_url("www", "/home")) as resp:
             self.csrf_token = re.search(
-                r"<script>Roblox\.XsrfToken\.setToken\('(.+?)'\);</script>",
+                r"<script>Roblox\.XsrfToken\.setToken\('(.+?)'\);<\/script>",
                 resp.text
             ).group(1)
 
