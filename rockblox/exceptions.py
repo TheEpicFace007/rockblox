@@ -13,9 +13,10 @@ class WebError(Exception):
     code: int
     message: int
 
-    def __init__(self, code, message):
+    def __init__(self, code, message=None, status=None):
         self.code = code
         self.message = message
+        self.status = status
 
     def type(self):
         if self.code == 0:

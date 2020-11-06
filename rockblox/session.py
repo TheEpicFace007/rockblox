@@ -114,7 +114,7 @@ class Session:
             resp.json = lambda: data # if we parse it, might as well cache it
             for err in data.get("errors", []):
                 raise WebError(
-                    err.get("code"), err.get("message"))
+                    err.get("code"), err.get("message"), resp.status_code)
 
     """
     Wrapper for requests_session.request
