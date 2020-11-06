@@ -53,8 +53,7 @@ class Session:
     def browser_id(self):
         if self.cookies.get("RBXEventTrackerV2"):
             return int(re.search(r"browserid=(\d+?)",
-                                              self.cookies["RBXEventTrackerV2"]) \
-                                              .group(1))
+                       self.cookies["RBXEventTrackerV2"]).group(1))
     """
     Build URL based on self.host, subdomain and path
     """                            
