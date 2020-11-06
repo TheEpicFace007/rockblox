@@ -73,7 +73,7 @@ class Session:
             secure=True)
 
         with self.request("GET",
-                          self.build_url("users", "/v1/users/authenticated")) as resp:
+            self.build_url("users", "/v1/users/authenticated")) as resp:
             if resp.status_code != 200:
                 raise InvalidCredentials("Invalid or expired .ROBLOSECURITY cookie")
         
