@@ -7,10 +7,6 @@ class WebErrorType(Enum):
     UNKNOWN = auto()
     ENDPOINT_SPECIFIC = auto()
 
-# login error, or invalid cookie
-class InvalidCredentials(Exception):
-    pass
-
 class WebError(Exception):
     code: int
     message: int
