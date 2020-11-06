@@ -83,6 +83,10 @@ class Session:
 
         # visit homepage to grab initial csrf token, in a natural way
         with self.request("GET", self.build_url("www", "/home")) as resp:
+            self.under_13 = re.search(
+                r"data-isunder13=\"?(true|false)\"?",
+                resp.text
+            ).group(1) == "true"
             self.csrf_token = re.search(
                 r"<script>Roblox\.XsrfToken\.setToken\('([A-z0-9+-_]{8,14})'\);<\/script>",
                 resp.text
