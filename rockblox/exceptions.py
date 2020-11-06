@@ -20,10 +20,10 @@ class WebError(Exception):
 
     def type(self):
         if self.code == 0:
-            if self.message == "Token Validation Failed":
+            if self.status == 403:
                 return WebErrorType.INVALID_XSRF
 
-            elif self.message == "Authorization has been denied for this request.":
+            elif self.status == 401:
                 return WebErrorType.UNAUTHENTICATED
 
             else:
