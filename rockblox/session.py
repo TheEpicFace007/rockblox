@@ -38,7 +38,7 @@ class Session:
             self.auth_from_cookie(ROBLOSECURITY)
     
     """
-    Represent instance based on username, or the string 'Unauthenticated'
+    Represent instance based on username, or string 'Unauthenticated'
     """
     def __repr__(self) -> str:
         if self.id:
