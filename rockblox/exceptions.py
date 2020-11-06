@@ -6,6 +6,7 @@ class WebErrorType(Enum):
     UNKNOWN = auto()
     ENDPOINT_SPECIFIC = auto()
 
+# login error, or invalid cookie
 class InvalidCredentials(Exception):
     pass
 
@@ -17,6 +18,9 @@ class WebError(Exception):
         self.code = code
         self.message = message
         self.status = status
+
+    def __repr__(self):
+        return f"{self.message} ({self.code} - {self.status})"
 
     def type(self):
         if self.code == 0:
