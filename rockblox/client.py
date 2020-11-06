@@ -151,7 +151,7 @@ class Client:
             "-a", self.redeem_url,
             "-t", auth_ticket,
             "-j", self.build_joinscript_url(),
-            "-b", str(self.session.browser_tracker_id),
+            "-b", str(self.session.browser_id),
             f"--launchtime={int(time.time()*1000)}",
             "--rloc", "en_us",
             "--gloc", "en_us"
