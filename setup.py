@@ -16,10 +16,8 @@ setuptools.setup(
     classifiers=[
     ],
     install_requires=[
-        "requests"
-    ],
-    extras_require=[
-       {"client": ["pywin32", "pillow"]}
+        "requests",
+        'pywin32;platform_system=="Windows"'
     ],
     python_requires='>=3.6',
 )
