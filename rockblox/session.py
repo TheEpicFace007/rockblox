@@ -19,7 +19,7 @@ class Session:
     name: str
     
     def __init__(self, ROBLOSECURITY: str=None, requests_session: requests.Session=None,
-                 user_agent=USER_AGENT, host=DEFAULT_HOST):
+                 user_agent: str=USER_AGENT, host: str=DEFAULT_HOST):
         self.host = host
 
         self.requests_session = requests_session or requests.Session()
