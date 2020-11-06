@@ -65,7 +65,7 @@ class Session:
     """
     Build URL based on self.host, subdomain and path
     """                            
-    def build_url(self, subdomain="www", path=""):
+    def build_url(self, subdomain: str="www", path: str=""):
         # redirect under 13 accounts to the web. subdomain
         if subdomain.lower() == "www" and self.under_13:
             subdomain = "web"
@@ -103,7 +103,7 @@ class Session:
     """
     Callback for responses from .request
     """
-    def _process_response(self, resp):
+    def _process_response(self, resp: requests.Response):
         # set new xsrf token if specified
         if "x-csrf-token" in resp.headers:
             self.csrf_token = resp.headers["x-csrf-token"]

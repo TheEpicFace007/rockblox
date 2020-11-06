@@ -66,7 +66,7 @@ class Client:
     process: subprocess.Popen
 
     def __init__(self, session: 'Session', place_id: int, job_id: str=None,
-        size=(100,100), client_path: str=find_client_path()):
+        size: tuple=(100,100), client_path: str=find_client_path()):
         if not session.id:
             raise("Session is not authenticated")
         self.session = session
