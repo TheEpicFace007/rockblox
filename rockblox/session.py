@@ -17,7 +17,7 @@ class Session:
     ROBLOSECURITY: str
     id: int
     name: str
-        
+    
     def __init__(self, ROBLOSECURITY: str=None, requests_session: requests.Session=None,
                  user_agent=USER_AGENT, host=DEFAULT_HOST):
         self.host = host
@@ -36,30 +36,44 @@ class Session:
         self._session_setup()
         if ROBLOSECURITY:
             self.auth_from_cookie(ROBLOSECURITY)
-            
+    
+    """
+    Represent instance based on username, or the string 'Unauthenticated'
+    """
     def __repr__(self) -> str:
         if self.id:
             return self.name
         else:
             return "Unauthenticated"
 
+    """
+    Gathers tracking cookies from pages that a real browser would visit
+    """
     def _session_setup(self):
         self.request("GET", self.build_url("www", "/"))
         self.request("GET", self.build_url("www", "/timg/rbx"))
 
+    """
+    Returns browser tracking ID from RBXEventTrackerV2 cookie
+    """
     @property
     def browser_id(self):
         if self.cookies.get("RBXEventTrackerV2"):
             return int(re.search(r"browserid=(\d+?)",
                                               self.cookies["RBXEventTrackerV2"]) \
                                               .group(1))
-                                    
+    """
+    Build URL based on self.host, subdomain and path
+    """                            
     def build_url(self, subdomain="www", path=""):
         # redirect under 13 accounts to the web. subdomain
         if subdomain.lower() == "www" and self.under_13:
             subdomain = "web"
         return f"https://{subdomain}.{self.host}{path}"
 
+    """
+    Attempt to authenticate using provided .ROBLOSECURITY cookie
+    """
     def auth_from_cookie(self, ROBLOSECURITY: str):
         self.cookies.set(
             domain=f".{self.host}", name=".ROBLOSECURITY", value=ROBLOSECURITY,
@@ -74,6 +88,9 @@ class Session:
         self.name = auth_info["name"]
         self.request("GET", self.build_url("www", "/home"))
     
+    """
+    Build dict of headers based on method, host and extra headers
+    """
     def get_headers(self, method: str, host: str, headers: dict={}) -> dict:
         if host.lower().endswith(f".{self.host}"):
             headers["Origin"] = self.build_url("www")
@@ -83,6 +100,9 @@ class Session:
                     headers["X-CSRF-TOKEN"] = self.csrf_token
         return headers
 
+    """
+    Callback for responses from .request
+    """
     def _process_response(self, resp):
         # set new xsrf token if specified
         if "x-csrf-token" in resp.headers:
