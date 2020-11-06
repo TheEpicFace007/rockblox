@@ -1,5 +1,5 @@
-from .session import Session as Roblox
-from .client import Client as RobloxClient
-from .client import ClientMutex as RobloxClientMutex
-from .exceptions import WebError as RobloxWebError
-from .exceptions import WebErrorType as RobloxWebErrorType
+from .session import Session
+from .client import Client
+from .client import ClientMutex
+from .exceptions import WebError
+from .exceptions import WebErrorType
