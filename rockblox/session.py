@@ -58,7 +58,7 @@ class Session:
     """
     Build URL based on self.host, subdomain and path
     """                            
-    def build_url(self, subdomain: str="www", path: str=""):
+    def build_url(self, subdomain: str, path: str=""):
         # redirect under 13 accounts to the web. subdomain
         if subdomain.lower() == "www" and self.under_13:
             subdomain = "web"
