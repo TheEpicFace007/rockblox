@@ -21,18 +21,18 @@ class Session:
     def __init__(self, ROBLOSECURITY: str=None, requests_session: requests.Session=None,
                  user_agent=USER_AGENT, host=DEFAULT_HOST):
         self.host = host
+
         self.requests_session = requests_session or requests.Session()
         self.cookies = self.requests_session.cookies
+        self.requests_session.headers.update({
+            "User-Agent": user_agent
+        })
 
         self.csrf_token = None
-
         self.id = None
         self.name = None
         self.under_13 = None
 
-        self.requests_session.headers.update({
-            "User-Agent": user_agent
-        })
         self._session_setup()
         if ROBLOSECURITY:
             self.auth_from_cookie(ROBLOSECURITY)
