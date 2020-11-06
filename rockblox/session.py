@@ -47,13 +47,6 @@ class Session:
             return "Unauthenticated"
 
     """
-    Gather tracking cookies from pages that a real browser would visit
-    """
-    def _session_setup(self):
-        self.request("GET", self.build_url("www", "/"))
-        self.request("GET", self.build_url("www", "/timg/rbx"))
-
-    """
     Return browser tracking ID from RBXEventTrackerV2 cookie
     """
     @property
@@ -87,11 +80,18 @@ class Session:
         self.id = auth_info["id"]
         self.name = auth_info["name"]
         self.request("GET", self.build_url("www", "/home"))
+
+    """
+    Gather tracking cookies from pages that a real browser would visit
+    """
+    def _session_setup(self):
+        self.request("GET", self.build_url("www", "/"))
+        self.request("GET", self.build_url("www", "/timg/rbx"))
     
     """
     Build dict of headers based on method, host and extra headers
     """
-    def build_headers(self, method: str, host: str, headers: dict={}) -> dict:
+    def _build_headers(self, method: str, host: str, headers: dict={}) -> dict:
         if host.lower().endswith(f".{self.host}"):
             headers["Origin"] = self.build_url("www")
             headers["Referer"] = self.build_url("www", "/")
@@ -125,7 +125,7 @@ class Session:
                 allow_redirects: bool=False, proxies: dict=None):
         def wrap():
             parsed_url = urlsplit(url)
-            headers.update(self.build_headers(method, parsed_url.hostname))
+            headers.update(self._build_headers(method, parsed_url.hostname))
 
             resp = self.requests_session.request(
                 method=method,
