@@ -18,10 +18,10 @@ class WebError(Exception):
 
     def type(self):
         if self.message == "Token Validation Failed":
-            return ErrorType.INVALID_XSRF
+            return WebErrorType.INVALID_XSRF
 
         elif self.message == "Authorization has been denied for this request.":
-            return ErrorType.UNAUTHENTICATED
+            return WebErrorType.UNAUTHENTICATED
         
         else:
-            return ErrorType.ENDPOINT_SPECIFIC
+            return WebErrorType.ENDPOINT_SPECIFIC
