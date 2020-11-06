@@ -17,7 +17,8 @@ setuptools.setup(
     ],
     install_requires=[
         "requests",
-        'pywin32;platform_system=="Windows"'
+        'pywin32;platform_system=="Windows"',
+        'pillow;platform_system=="Windows"'
     ],
     python_requires='>=3.6',
 )
