@@ -76,12 +76,9 @@ class Session:
     def _auth_setup(self):
         with self.request("GET",
             self.build_url("users", "/v1/users/authenticated")) as resp:
-            if not resp.ok:
-                raise InvalidCredentials("Invalid or expired .ROBLOSECURITY cookie")
-        
-            auth_info = resp.json()
-            self.id = auth_info["id"]
-            self.name = auth_info["name"]
+            user = resp.json()
+            self.id = user["id"]
+            self.name = user["name"]
 
         # visit homepage to get tracking cookies, initial xsrf token and under_13
         with self.request("GET", self.build_url("www", "/home")) as resp:
