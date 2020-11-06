@@ -15,9 +15,10 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
     ],
-    extras_require=[
-       'pywin32',
-       'pillow'
+    install_requires=[
+        "requests",
+        'pywin32;platform_system=="Windows"',
+        'pillow;platform_system=="Windows"'
     ],
     python_requires='>=3.6',
 )
