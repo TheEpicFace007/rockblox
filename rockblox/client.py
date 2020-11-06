@@ -90,9 +90,9 @@ class Client:
     def build_joinscript_url(self) -> str:
         pl_url = "https://assetgame.roblox.com/game/PlaceLauncher.ashx"
         if self.place_id and self.job_id:
-            script_url = f"{pl_url}?request=RequestGameJob&browserTrackerId={self.session.browser_tracker_id}&placeId={self.place_id}&gameId={self.job_id}&isPlayTogetherGame=false"
+            script_url = f"{pl_url}?request=RequestGameJob&browserTrackerId={self.session.browser_id}&placeId={self.place_id}&gameId={self.job_id}&isPlayTogetherGame=false"
         elif self.place_id:
-            script_url = f"{pl_url}?request=RequestGame&browserTrackerId={self.session.browser_tracker_id}&placeId={self.place_id}&isPlayTogetherGame=false"
+            script_url = f"{pl_url}?request=RequestGame&browserTrackerId={self.session.browser_id}&placeId={self.place_id}&isPlayTogetherGame=false"
         return script_url
     
     """

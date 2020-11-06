@@ -5,6 +5,9 @@ class ErrorType(Enum):
     UNAUTHENTICATED = auto()
     ENDPOINT_SPECIFIC = auto()
 
+class InvalidCredentials(Exception):
+    pass
+
 class WebError(Exception):
     code: int
     message: int

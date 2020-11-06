@@ -1,9 +1,10 @@
-from .exceptions import WebError, ErrorType
+from .exceptions import WebError, ErrorType, InvalidCredentials
 from urllib.parse import urlsplit
 import requests
 import re
 
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
+DEFAULT_HOST = "roblox.com"
 
 ## TODO:
 ## - Set .under_13, once a new endpoint for it is found
@@ -17,14 +18,13 @@ class Session:
     id: int
     name: str
         
-    def __init__(self, ROBLOSECURITY: str=None, requests: requests.Session=None,
-                 user_agent=USER_AGENT, host="roblox.com"):
+    def __init__(self, ROBLOSECURITY: str=None, requests_session: requests.Session=None,
+                 user_agent=USER_AGENT, host=DEFAULT_HOST):
         self.host = host
-        self.requests_session = requests or requests.Session()
+        self.requests_session = requests_session or requests.Session()
         self.cookies = self.requests_session.cookies
 
         self.csrf_token = None
-        self.browser_id = None
 
         self.id = None
         self.name = None
@@ -55,28 +55,27 @@ class Session:
                                               .group(1))
                                     
     def build_url(self, subdomain="www", path=""):
+        # redirect under 13 accounts to the web. subdomain
         if subdomain.lower() == "www" and self.under_13:
             subdomain = "web"
         return f"https://{subdomain}.{self.host}{path}"
 
     def auth_from_cookie(self, ROBLOSECURITY: str):
-        self.cookies.create_cookie(
-            domain=f".{self.host}", name=".ROBLOSECURITY", value=ROBLOSECURITY)
+        self.cookies.set(
+            domain=f".{self.host}", name=".ROBLOSECURITY", value=ROBLOSECURITY,
+            secure=True)
 
         auth_resp = self.request("GET", self.build_url("users", "/v1/users/authenticated"))
-        if auth_resp.status != 200:
-            raise Exception("Invalid or expired .ROBLOSECURITY cookie")
+        if auth_resp.status_code != 200:
+            raise InvalidCredentials("Invalid or expired .ROBLOSECURITY cookie")
         
         auth_info = auth_resp.json()
         self.id = auth_info["id"]
         self.name = auth_info["name"]
-
-        self.request("GET", self.build_url("www", "/usercheck/show-tos?isLicensingTermsCheckNeeded=False"),
-                     headers={"accept-language": "en-US,en;q=0.9"})
+        self.request("GET", self.build_url("www", "/home"))
     
     def get_headers(self, method: str, host: str, headers: dict={}) -> dict:
-        headers = headers
-        if host.lower().endswith(f".{host}"):
+        if host.lower().endswith(f".{self.host}"):
             headers["Origin"] = self.build_url("www")
             headers["Referer"] = self.build_url("www", "/")
             if method in ["POST", "PATCH", "PUT", "DELETE"]:
@@ -95,15 +94,16 @@ class Session:
             resp.json = lambda: data
             for err in data.get("errors", []):
                 raise WebError(
-                    err.get("code"), err.get("msg"))
+                    err.get("code"), err.get("message"))
 
+    """
+    Wrapper for requests_session.request
+    """
     def request(self, method: str, url: str, params: dict=None,
                 data: (str, bytes, dict)=None, json: (str, dict)=None, headers: dict={},
                 cookies: dict=None, files: dict=None, timeout: float=None,
                 allow_redirects: bool=False, proxies: dict=None):
-        resp = None
         def wrap():
-            global resp
             parsed_url = urlsplit(url)
             headers.update(self.get_headers(method, parsed_url.hostname))
 
@@ -120,15 +120,16 @@ class Session:
                 allow_redirects=allow_redirects,
                 proxies=proxies
             )
+            return resp
 
-        wrap()
+        resp = wrap()
         try:
             self._process_response(resp)
         except WebError as err:
             # mismatching csrf token, re-send request
             if err.type() == ErrorType.INVALID_XSRF:
-                wrap()
+                resp = wrap()
             else:
                 raise
-
+        
         return resp
