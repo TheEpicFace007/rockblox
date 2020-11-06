@@ -3,6 +3,7 @@ from enum import Enum, auto
 class WebErrorType(Enum):
     INVALID_XSRF = auto()
     UNAUTHENTICATED = auto()
+    TOO_MANY_REQUESTS = auto()
     UNKNOWN = auto()
     ENDPOINT_SPECIFIC = auto()
 
@@ -29,6 +30,9 @@ class WebError(Exception):
 
             elif self.status == 401:
                 return WebErrorType.UNAUTHENTICATED
+            
+            elif self.status == 429:
+                return WebErrorType.TOO_MANY_REQUESTS
 
             else:
                 return WebErrorType.UNKNOWN
