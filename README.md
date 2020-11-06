@@ -14,16 +14,16 @@ pip install -U git+https://github.com/h0nde/rockblox.git
 
 # Usage
 ```python
-from rockblox import Roblox, RobloxClient, RobloxClientMutex
+import rockblox
 from time import sleep
 
-mutex = RobloxClientMutex() # allows multiple clients to be open at once
+mutex = rockblox.ClientMutex() # allows multiple clients to be open at once
 
 # create new session using cookie.txt
 with open("cookie.txt") as f:
-  session = Roblox(f.read().strip())
+  session = rockblox.Session(f.read().strip())
 
-with RobloxClient(session, 1818) as client:
+with rockblox.Client(session, 1818) as client:
   client.wait_for(15) # wait up to 15 seconds for game to load
   client.chat_message("burger")
   sleep(1)
