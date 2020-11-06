@@ -72,13 +72,14 @@ class Session:
             domain=f".{self.host}", name=".ROBLOSECURITY", value=ROBLOSECURITY,
             secure=True)
 
-        auth_resp = self.request("GET", self.build_url("users", "/v1/users/authenticated"))
-        if auth_resp.status_code != 200:
-            raise InvalidCredentials("Invalid or expired .ROBLOSECURITY cookie")
+        with self.request("GET",
+                          self.build_url("users", "/v1/users/authenticated")) as resp:
+            if resp.status_code != 200:
+                raise InvalidCredentials("Invalid or expired .ROBLOSECURITY cookie")
         
-        auth_info = auth_resp.json()
-        self.id = auth_info["id"]
-        self.name = auth_info["name"]
+            auth_info = resp.json()
+            self.id = auth_info["id"]
+            self.name = auth_info["name"]
 
         # visit homepage to grab initial csrf token, in a natural way
         with self.request("GET", self.build_url("www", "/home")) as resp:
