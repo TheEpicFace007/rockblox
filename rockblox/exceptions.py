@@ -24,15 +24,15 @@ class WebError(Exception):
         return f"{self.message} ({self.code} - {self.status})"
 
     def type(self):
+        if self.status == 429:
+                return WebErrorType.TOO_MANY_REQUESTS
+        
         if self.code == 0:
             if self.status == 403:
                 return WebErrorType.INVALID_XSRF
 
             elif self.status == 401:
                 return WebErrorType.UNAUTHENTICATED
-            
-            elif self.status == 429:
-                return WebErrorType.TOO_MANY_REQUESTS
 
             else:
                 return WebErrorType.UNKNOWN
