@@ -31,26 +31,26 @@ with rockblox.Client(session, 1818) as client:
 ```
 
 # Documentation
-### Roblox(ROBLOSECURITY, requests_session=None, user_agent=DEFAULT, host="roblox.com")
+### Session(ROBLOSECURITY, requests_session=None, user_agent=DEFAULT, host="roblox.com")
 Creates a new session instance.
 
-### RobloxClientMutex()
+### ClientMutex()
 Takes control of the client mutex, so that multiple client instances can be open at the same time. Won't work if an instance is already open before it is called.
 
-### RobloxClient(session, place_id, job_id=None, client_path=default)
+### Client(session, place_id, job_id=None, client_path=default)
 Creates a new client instance.
 
-### RobloxClient.wait_for(timeout=15, check_interval=0.25, ignore_colors=\[(45, 45, 45)])
+### Client.wait_for(timeout=15, check_interval=0.25, ignore_colors=\[(45, 45, 45)])
 Waits until the client is past the loading screen. This uses the screenshot method and therefore may not be 100% reliable.
 
-### RobloxClient.ping(match_place_id=True, match_job_id=False) -> bool
+### Client.ping(match_place_id=True, match_job_id=False) -> bool
 Checks if the user is currently in-game using the presence web-api, can be used as a kind of "ping" to check if the client has disconnected from the game.
 
-### RobloxClient.screenshot() -> PIL.Image
+### Client.screenshot() -> PIL.Image
 Returns a `PIL.Image` screenshot of the client in it's current window size.
 
-### RobloxClient.chat_message(message)
+### Client.chat_message(message)
 Attempts to write and send a chat message by simulating keystrokes on the client.
 
-### RobloxClient.close()
+### Client.close()
 Kills the client process.
