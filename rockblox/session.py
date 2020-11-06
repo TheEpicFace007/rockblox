@@ -81,7 +81,8 @@ class Session:
             self.name = user["name"]
 
         # visit homepage to get tracking cookies, initial xsrf token and under_13
-        with self.request("GET", self.build_url("www", "/home")) as resp:
+        with self.request("GET", self.build_url("www", "/home"),
+                          allow_redirects=True) as resp:
             self.under_13 = re.search(
                 r"data-isunder13=\"?(true|false)\"?",
                 resp.text
