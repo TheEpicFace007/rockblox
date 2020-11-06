@@ -3,6 +3,7 @@ from enum import Enum, auto
 class WebErrorType(Enum):
     INVALID_XSRF = auto()
     UNAUTHENTICATED = auto()
+    UNKNOWN = auto()
     ENDPOINT_SPECIFIC = auto()
 
 class InvalidCredentials(Exception):
@@ -17,11 +18,15 @@ class WebError(Exception):
         self.message = message
 
     def type(self):
-        if self.message == "Token Validation Failed":
-            return WebErrorType.INVALID_XSRF
+        if self.code == 0:
+            if self.message == "Token Validation Failed":
+                return WebErrorType.INVALID_XSRF
 
-        elif self.message == "Authorization has been denied for this request.":
-            return WebErrorType.UNAUTHENTICATED
+            elif self.message == "Authorization has been denied for this request.":
+                return WebErrorType.UNAUTHENTICATED
+
+            else:
+                return WebErrorType.UNKNOWN
         
         else:
             return WebErrorType.ENDPOINT_SPECIFIC
