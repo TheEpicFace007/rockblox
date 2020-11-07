@@ -10,7 +10,6 @@ class Session:
     host: str
     requests_session: requests.Session
     csrf_token: str
-    browser_id: int
     id: int
     name: str
     under_13: bool
@@ -47,14 +46,14 @@ class Session:
     Return browser tracking ID from RBXEventTrackerV2 cookie
     """
     @property
-    def browser_id(self):
+    def browser_id(self) -> int:
         if self.cookies.get("RBXEventTrackerV2"):
             return int(re.search(r"browserid=(\d+?)",
                        self.cookies["RBXEventTrackerV2"]).group(1))
     """
     Build URL based on self.host, subdomain and path
     """                            
-    def build_url(self, subdomain: str, path: str=""):
+    def build_url(self, subdomain: str, path: str="") -> str:
         # redirect under 13 accounts to the web. subdomain
         if subdomain.lower() == "www" and self.under_13:
             subdomain = "web"
@@ -129,7 +128,7 @@ class Session:
     def request(self, method: str, url: str, params: dict=None,
                 data: (str, bytes, dict)=None, json: (str, dict)=None, headers: dict={},
                 cookies: dict=None, files: dict=None, timeout: float=None,
-                allow_redirects: bool=False, proxies: dict=None):
+                allow_redirects: bool=False, proxies: dict=None) -> requests.Response:
         def wrap():
             parsed_url = urlsplit(url)
             headers.update(self._build_headers(method, parsed_url.hostname))
