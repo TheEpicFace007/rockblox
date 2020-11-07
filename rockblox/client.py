@@ -74,8 +74,9 @@ class Client:
         self.job_id = job_id
         self.process = None
         self.hwnd = None
-        self.start()
-        self.resize(size)
+        self.launch()
+        if size:
+            self.resize(size)
 
     def __enter__(self):
         return self
@@ -143,12 +144,13 @@ class Client:
     """
     Launch the RobloxPlayerBeta.exe process, and wait for it's window to spawn
     """
-    def start(self):
+    def launch(self):
         if self.process:
-            raise Exception(".start() has already been called")
+            raise Exception(".launch() has already been called")
 
-        auth_ticket = self.session.request("POST", "https://auth.roblox.com/v1/authentication-ticket") \
-            .headers["rbx-authentication-ticket"]
+        with self.session.request(
+            "POST", "https://auth.roblox.com/v1/authentication-ticket") as resp:
+            auth_ticket = resp.headers["rbx-authentication-ticket"]
         
         self.process = subprocess.Popen([
             os.path.join(self.client_path, "RobloxPlayerBeta.exe"),
@@ -163,7 +165,7 @@ class Client:
         ])
 
         start = time.time()
-        while time.time()-start < 5:
+        while time.time()-start < 15:
             hwnd = get_hwnd_for_pid(self.process.pid)
             if hwnd:
                 self.hwnd = hwnd
