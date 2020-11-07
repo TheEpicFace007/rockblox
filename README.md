@@ -32,7 +32,7 @@ with rockblox.Client(session, 1818) as client:
 ```
 
 # Documentation
-### Session(ROBLOSECURITY, requests_session=None, user_agent=DEFAULT, host="roblox.com")
+### Session(ROBLOSECURITY, requests_session=None, user_agent=DEFAULT, proxy_url=None, host="roblox.com")
 Creates a new session instance.
 
 ### ClientMutex()
