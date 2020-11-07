@@ -69,12 +69,46 @@ class Session:
             secure=True)
         self._auth_setup()
 
+    """
+    Register account
+    """
+    def signup(self, username: str, password: str, birthday: str,
+               gender: str=None, email: str=None, locale: str="en-US",
+               captcha_token: str=None, captcha_provider: str=None):
+        with self.request(
+            "POST", "https://auth.roblox.com/v2/signup",
+            json={
+                "username": username,
+                "password": password,
+                "birthday": birthday,
+                "gender": gender,
+                "isTosAgreementBoxChecked": True,
+                "email": email,
+                "locale": locale,
+                "context": "MultiverseSignupForm",
+                "referralData": None,
+                "displayAvatarV2": False,
+                "displayContextV2": False
+            }
+        ) as resp:
+            resp = resp.json()
+            print(resp)
+            self.id = resp["userId"]
+            self.name = password
+            self._auth_setup()
+            return resp
+
+    """
+    auth setup
+    """
     def _auth_setup(self):
         with self.request("GET",
             self.build_url("users", "/v1/users/authenticated")) as resp:
             user = resp.json()
             self.id = user["id"]
             self.name = user["name"]
+
+        self.csrf_token = None
 
         # visit homepage to get tracking cookies, initial xsrf token and under_13
         with self.request("GET", self.build_url("www", "/home"),
@@ -150,6 +184,7 @@ class Session:
             # mismatching csrf token, re-send request
             if err.type() == WebErrorType.INVALID_XSRF:
                 resp = wrap()
+                self._process_response(resp)
             else:
                 raise
         
