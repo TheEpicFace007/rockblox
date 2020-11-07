@@ -151,9 +151,8 @@ class Session:
             self.csrf_token = resp.headers["x-csrf-token"]
 
         # process json errors if specified
-        if "/json" in resp.headers.get("content-type", ""):
+        if not resp.ok and "/json" in resp.headers.get("content-type", ""):
             data = resp.json()
-            resp.json = lambda: data # if we parse it, might as well cache it
             for err in data.get("errors", []):
                 raise WebError(
                     err.get("code"), err.get("message"), resp.status_code)
