@@ -87,6 +87,8 @@ class Session:
                 "locale": locale,
                 "context": "MultiverseSignupForm",
                 "referralData": None,
+                "captchaToken": captcha_token,
+                "captchaProvider": captcha_provider,
                 "displayAvatarV2": False,
                 "displayContextV2": False
             }
