@@ -10,10 +10,10 @@ class Session:
     host: str
     requests_session: requests.Session
     csrf_token: str
-    browser_tracker_id: int
-    ROBLOSECURITY: str
+    browser_id: int
     id: int
     name: str
+    under_13: bool
     
     def __init__(self, ROBLOSECURITY: str=None, requests_session: requests.Session=None,
                  user_agent: str=USER_AGENT, host: str=DEFAULT_HOST):
