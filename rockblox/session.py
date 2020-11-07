@@ -36,6 +36,7 @@ class Session:
 
         self.request("GET", self.build_url("www", "/"))
         self.request("GET", self.build_url("www", "/timg/rbx"))
+        
         if ROBLOSECURITY:
             self.auth_from_cookie(ROBLOSECURITY)
     
