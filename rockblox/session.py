@@ -81,7 +81,8 @@ class Session:
                gender: str=None, email: str=None, locale: str="en-US",
                captcha_token: str=None, captcha_provider: str=None):
         with self.request(
-            "POST", "https://auth.roblox.com/v2/signup",
+            method="POST",
+            url=self.build_url("auth", "/v2/signup"),
             json={
                 "username": username,
                 "password": password,
