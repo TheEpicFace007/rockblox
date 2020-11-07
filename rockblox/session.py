@@ -15,7 +15,7 @@ class Session:
     under_13: bool
     
     def __init__(self, ROBLOSECURITY: str=None, requests_session: requests.Session=None,
-                 user_agent: str=USER_AGENT, host: str=DEFAULT_HOST):
+                 user_agent: str=USER_AGENT, proxy_url: str=None, host: str=DEFAULT_HOST):
         self.host = host
 
         self.requests_session = requests_session or requests.Session()
@@ -23,6 +23,11 @@ class Session:
         self.requests_session.headers.update({
             "User-Agent": user_agent
         })
+        if proxy_url:
+            self.requests_session.proxies = {
+                "https": proxy_url,
+                "http": proxy_url
+            }
 
         self.csrf_token = None
         self.id = None
