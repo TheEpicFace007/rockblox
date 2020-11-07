@@ -25,6 +25,7 @@ with open("cookie.txt") as f:
 
 with rockblox.Client(session, 1818) as client:
   client.wait_for(15) # wait up to 15 seconds for game to load
+  print(f"joined game with {session.name}!")
   client.chat_message("burger")
   sleep(1)
   client.screenshot().show()
