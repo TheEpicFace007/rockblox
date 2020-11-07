@@ -83,7 +83,7 @@ class Session:
                 resp.text
             ).group(1) == "true"
             self.csrf_token = re.search(
-                r"<script>Roblox\.XsrfToken\.setToken\('([A-z0-9+-_]{8,14})'\);<\/script>",
+                r"<script>Roblox\.XsrfToken\.setToken\('([A-z0-9+-_\/]{8,14})'\);<\/script>",
                 resp.text
             ).group(1)
 
