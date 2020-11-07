@@ -1,7 +1,7 @@
 from .input import press_key, release_key, bulk_press_and_release_key
-from urllib3 import PoolManager
 from threading import Lock
 from PIL import Image
+import requests
 import ctypes
 import win32ui
 import win32gui
@@ -36,9 +36,8 @@ def find_client_path() -> str:
         "C:\\Program Files\\Roblox\\Versions\\{version}",
     ]
     username = os.environ["USERPROFILE"].split("\\")[-1]
-    with PoolManager() as pm:
-        version = pm.request("GET", "http://setup.roblox.com/version.txt") \
-            .data.decode("UTF-8").strip()
+    with requests.get("http://setup.roblox.com/version.txt") as resp:
+        version = resp.text.strip()
 
     for template in templates:
         path = template.format(
