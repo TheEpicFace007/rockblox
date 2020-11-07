@@ -3,7 +3,7 @@ import rockblox
 import secrets
 
 # initialize solver(2captcha) and rockblox session
-solver = TwoCaptcha("de6130fb5379c2aaf6e5b08b38d32f94")
+solver = TwoCaptcha("x")
 session = rockblox.Session()
 
 # wait for captcha result
