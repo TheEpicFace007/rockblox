@@ -128,8 +128,10 @@ class Session:
     auth setup
     """
     def _auth_setup(self):
-        with self.request("GET",
-            self.build_url("users", "/v1/users/authenticated")) as resp:
+        with self.request(
+            method="GET",
+            url=self.build_url("users", "/v1/users/authenticated")
+        ) as resp:
             user = resp.json()
             self.id = user["id"]
             self.name = user["name"]
@@ -137,8 +139,11 @@ class Session:
         self.csrf_token = None
 
         # visit homepage to get tracking cookies, initial xsrf token and under_13
-        with self.request("GET", self.build_url("www", "/home"),
-                          allow_redirects=True) as resp:
+        with self.request(
+            method="GET", 
+            url=self.build_url("www", "/home"),
+            allow_redirects=True
+        ) as resp:
             self.under_13 = re.search(
                 r"data-isunder13=\"?(true|false)\"?",
                 resp.text
