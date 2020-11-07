@@ -92,7 +92,6 @@ class Session:
             }
         ) as resp:
             resp = resp.json()
-            print(resp)
             self.id = resp["userId"]
             self.name = password
             self._auth_setup()
