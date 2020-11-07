@@ -29,7 +29,8 @@ class Session:
         self.name = None
         self.under_13 = None
 
-        self._session_setup()
+        self.request("GET", self.build_url("www", "/"))
+        self.request("GET", self.build_url("www", "/timg/rbx"))
         if ROBLOSECURITY:
             self.auth_from_cookie(ROBLOSECURITY)
     
@@ -87,13 +88,6 @@ class Session:
                 resp.text
             ).group(1)
 
-    """
-    Gather tracking cookies from pages that a real browser would visit
-    """
-    def _session_setup(self):
-        self.request("GET", self.build_url("www", "/"))
-        self.request("GET", self.build_url("www", "/timg/rbx"))
-    
     """
     Build dict of headers based on method, host and extra headers
     """
