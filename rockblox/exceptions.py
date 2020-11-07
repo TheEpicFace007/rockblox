@@ -20,6 +20,8 @@ class WebError(Exception):
         return f"{self.message} ({self.code} - {self.status})"
 
     def type(self):
+        # this case is placed on top, so that global and endpoint-specific ratelimits
+        # don't have to be handled seperately
         if self.status == 429:
             return WebErrorType.TOO_MANY_REQUESTS
         
