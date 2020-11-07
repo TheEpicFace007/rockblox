@@ -164,8 +164,8 @@ class Session:
                 data: (str, bytes, dict)=None, json: (str, dict)=None, headers: dict={},
                 cookies: dict=None, files: dict=None, timeout: float=None,
                 allow_redirects: bool=False, proxies: dict=None) -> requests.Response:
+        parsed_url = urlsplit(url)
         def wrap():
-            parsed_url = urlsplit(url)
             headers.update(self._build_headers(method, parsed_url.hostname))
 
             resp = self.requests_session.request(
