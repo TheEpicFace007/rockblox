@@ -86,7 +86,7 @@ class Session:
             json={
                 "ctype": credential_type,
                 "cvalue": credential,
-                "password": password,
+                "password": password,#
                 "captchaToken": captcha_token,
                 "captchaProvider": captcha_provider
             }
