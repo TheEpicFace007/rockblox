@@ -87,8 +87,8 @@ class Session:
                 "ctype": credential_type,
                 "cvalue": credential,
                 "password": password,
-                "captcha_token": captcha_token,
-                "captcha_provider": captcha_provider
+                "captchaToken": captcha_token,
+                "captchaProvider": captcha_provider
             }
         ) as resp:
             data = resp.json()
