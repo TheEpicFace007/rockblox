@@ -88,6 +88,40 @@ class Client:
         return f"Client for {self.session}"
 
     """
+    Launch the RobloxPlayerBeta.exe process, and wait for it's window to spawn
+    """
+    def launch(self):
+        if self.process:
+            raise Exception(".launch() has already been called")
+
+        with self.session.request(
+            "POST", "https://auth.roblox.com/v1/authentication-ticket") as resp:
+            auth_ticket = resp.headers["rbx-authentication-ticket"]
+        
+        self.process = subprocess.Popen([
+            os.path.join(self.client_path, "RobloxPlayerBeta.exe"),
+            "--play",
+            "-a", self.redeem_url,
+            "-t", auth_ticket,
+            "-j", self.build_joinscript_url(),
+            "-b", str(self.session.browser_id),
+            f"--launchtime={int(time.time()*1000)}",
+            "--rloc", "en_us",
+            "--gloc", "en_us"
+        ])
+
+        start = time.time()
+        while time.time()-start < 15:
+            hwnd = get_hwnd_for_pid(self.process.pid)
+            if hwnd:
+                self.hwnd = hwnd
+                break
+        
+        if not self.hwnd:
+            self.close()
+            raise TimeoutError("Timed out while getting window")
+
+    """
     Build joinscript URL based on initial parameters
     """
     def build_joinscript_url(self) -> str:
@@ -140,40 +174,6 @@ class Client:
             time.sleep(check_interval)
         
         raise TimeoutError
-    
-    """
-    Launch the RobloxPlayerBeta.exe process, and wait for it's window to spawn
-    """
-    def launch(self):
-        if self.process:
-            raise Exception(".launch() has already been called")
-
-        with self.session.request(
-            "POST", "https://auth.roblox.com/v1/authentication-ticket") as resp:
-            auth_ticket = resp.headers["rbx-authentication-ticket"]
-        
-        self.process = subprocess.Popen([
-            os.path.join(self.client_path, "RobloxPlayerBeta.exe"),
-            "--play",
-            "-a", self.redeem_url,
-            "-t", auth_ticket,
-            "-j", self.build_joinscript_url(),
-            "-b", str(self.session.browser_id),
-            f"--launchtime={int(time.time()*1000)}",
-            "--rloc", "en_us",
-            "--gloc", "en_us"
-        ])
-
-        start = time.time()
-        while time.time()-start < 15:
-            hwnd = get_hwnd_for_pid(self.process.pid)
-            if hwnd:
-                self.hwnd = hwnd
-                break
-        
-        if not self.hwnd:
-            self.close()
-            raise TimeoutError("Timed out while getting window")
 
     """
     Kill the client process
