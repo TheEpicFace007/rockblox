@@ -98,7 +98,8 @@ class Session:
     Build dict of headers based on method, host and extra headers
     """
     def _build_headers(self, method: str, host: str, headers: dict={}) -> dict:
-        if host.lower().endswith(f".{self.host}"):
+        if host.lower() == self.host.lower() \
+            or host.lower().endswith(f".{self.host}"):
             headers["Origin"] = self.build_url("www")
             headers["Referer"] = self.build_url("www", "/")
             if method in ["POST", "PATCH", "DELETE", "PUT"]:
