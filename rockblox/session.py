@@ -75,11 +75,32 @@ class Session:
         self._auth_setup()
 
     """
+    Log into account using credentials
+    """
+    def login(self, credential: str, password: str,
+              credential_type="Username", captcha_token: str=None,
+              captcha_provider: str=None) -> dict:
+        with self.request(
+            method="POST",
+            url=self.build_url("auth", "/v2/login"),
+            json={
+                "ctype": credential_type,
+                "cvalue": credential,
+                "password": password,
+                "captcha_token": captcha_token,
+                "captcha_provider": captcha_provider
+            }
+        ) as resp:
+            data = resp.json()
+            self._auth_setup()
+            return data
+
+    """
     Register account
     """
     def signup(self, username: str, password: str, birthday: str,
                gender: str=None, email: str=None, locale: str="en-US",
-               captcha_token: str=None, captcha_provider: str=None):
+               captcha_token: str=None, captcha_provider: str=None) -> dict:
         with self.request(
             method="POST",
             url=self.build_url("auth", "/v2/signup"),
@@ -99,11 +120,9 @@ class Session:
                 "displayContextV2": False
             }
         ) as resp:
-            resp = resp.json()
-            self.id = resp["userId"]
-            self.name = password
+            data = resp.json()
             self._auth_setup()
-            return resp
+            return data
 
     """
     auth setup
