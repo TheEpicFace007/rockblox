@@ -102,11 +102,11 @@ class Client:
     Can be used as a kind of "ping" to check if the client has disconnected from the game.
     """
     def ping(self, match_place_id: bool=True, match_job_id: bool=False) -> bool:
-        resp = self.session.request(
+        with self.session.request(
             method="GET",
             url=f"https://api.roblox.com/users/{self.session.id}/onlinestatus",
-        )
-        presence = resp.json()
+        ) as resp:
+            presence = resp.json()
 
         if not presence["PlaceId"]:
             return False
