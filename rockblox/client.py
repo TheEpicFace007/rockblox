@@ -136,14 +136,14 @@ class Client:
     Uses the 'Presence Web-API' to check if the user is currently in-game.
     Can be used as a kind of "ping" to check if the client has disconnected from the game.
     """
-    def ping(self, match_place_id: bool=True, match_job_id: bool=False) -> bool:
+    def ping(self, match_place_id: bool=False, match_job_id: bool=False) -> bool:
         with self.session.request(
             method="GET",
             url=f"https://api.roblox.com/users/{self.session.id}/onlinestatus",
         ) as resp:
             presence = resp.json()
 
-        if not presence["PlaceId"]:
+        if presence["LastLocation"] != "Playing":
             return False
         
         if match_place_id \
