@@ -4,6 +4,7 @@ Python Roblox wrapper, primarily focused on the game client.
 Since this module doesn't directly hook into the client, it is limited by the following things:
 - It can only interact with one client at a time
 - Keystrokes may fail to register in time, causing chat messages to cut off
+- .wait_for relies on screenshots, making it somewhat unreliable
 
 DM me if you know of a way to send keystrokes to the client, without focusing the window.
 
