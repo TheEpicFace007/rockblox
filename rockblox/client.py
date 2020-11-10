@@ -230,7 +230,23 @@ class Client:
         win32gui.DeleteObject(dataBitMap.GetHandle())
         win32gui.ReleaseDC(self.hwnd, dc_handle)
         return im.crop((11,45, *self.size(11, 11))) # crop borders
-    
+
+    """
+    Press(hold) single key
+    """
+    def press_key(self, k):
+        with client_lock:
+            self.focus()
+            press_key(k)
+     
+    """
+    Release single key
+    """
+    def release_key(self, k):
+        with client_lock:
+            self.focus()
+            release_key(k)
+      
     """
     Attempts to write and send a chat message by simulating keystrokes
     """
