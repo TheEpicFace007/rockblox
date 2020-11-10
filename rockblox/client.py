@@ -28,25 +28,6 @@ def get_hwnd_for_pid(pid: int) -> int:
     win32gui.EnumWindows(callback, hwnds)
     return hwnds and hwnds[0]
 
-def find_client_path() -> str:
-    templates = [
-        "C:\\Users\\{username}\\AppData\\Local\\Roblox\\Versions\\{version}",
-        "C:\\Program Files (x86)\\Roblox\\Versions\\{version}",
-        "C:\\Program Files\\Roblox\\Versions\\{version}",
-    ]
-    username = os.environ["USERPROFILE"].split("\\")[-1]
-    with requests.get("http://setup.roblox.com/version.txt") as resp:
-        version = resp.text.strip()
-
-    for template in templates:
-        path = template.format(
-            username=username,
-            version=version)
-        if os.path.exists(path):
-            return path
-
-    raise FileNotFoundError("Could not find path to client")
-
 class ClientMutex:
     """
     Takes control of the client mutex, allowing multiple clients to be open at the same time.
@@ -123,6 +104,28 @@ class Client:
         if not self.hwnd:
             self.close()
             raise TimeoutError("Timed out while getting window")
+
+
+    def find_client_path(self) -> str:
+        templates = [
+            "C:\\Users\\{username}\\AppData\\Local\\Roblox\\Versions\\{version}",
+            "C:\\Program Files (x86)\\Roblox\\Versions\\{version}",
+            "C:\\Program Files\\Roblox\\Versions\\{version}",
+        ]
+        username = os.environ["USERPROFILE"].split("\\")[-1]
+        with requests.get(self.session.build_url(
+            "setup", "/version.txt")
+        ) as resp:
+            version = resp.text.strip()
+
+        for template in templates:
+            path = template.format(
+                username=username,
+                version=version)
+            if os.path.exists(path):
+                return path
+
+        raise FileNotFoundError("Could not find path to client")
 
     """
     Build joinscript URL based on initial parameters
