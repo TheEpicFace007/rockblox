@@ -167,9 +167,6 @@ class Session:
                     headers["X-CSRF-TOKEN"] = self.csrf_token
         return headers
 
-    """
-    Callback for responses from .request
-    """
     def _process_response(self, resp: requests.Response):
         # set new xsrf token if specified
         if "x-csrf-token" in resp.headers:
