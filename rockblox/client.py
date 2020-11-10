@@ -16,7 +16,7 @@ import win32api
 client_lock = Lock() # used to limit certain interactions to one client at a time
 shell = win32com.client.Dispatch("WScript.Shell") # setforeground needs this for some reason
 
-def get_hwnd_for_pid(pid) -> int:
+def get_hwnd_for_pid(pid: int) -> int:
     def callback(hwnd, hwnds):
         if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
             _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
@@ -81,7 +81,7 @@ class Client:
     def __enter__(self):
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, *_):
         self.close()
     
     def __repr__(self):
@@ -95,7 +95,8 @@ class Client:
             raise Exception(".launch() has already been called")
 
         with self.session.request(
-            "POST", self.session.build_url("auth", "/v1/authentication-ticket")
+            method="POST",
+            url=self.session.build_url("auth", "/v1/authentication-ticket")
         ) as resp:
             auth_ticket = resp.headers["rbx-authentication-ticket"]
         
@@ -212,7 +213,7 @@ class Client:
     """
     Captures a `PIL.Image` screenshot of the client window
     """
-    def screenshot(self) -> Image:
+    def screenshot(self, crop=True) -> Image:
         dc_handle = win32gui.GetWindowDC(self.hwnd)
         dcObj=win32ui.CreateDCFromHandle(dc_handle)
         cDC=dcObj.CreateCompatibleDC()
@@ -230,7 +231,9 @@ class Client:
         cDC.DeleteDC()
         win32gui.DeleteObject(dataBitMap.GetHandle())
         win32gui.ReleaseDC(self.hwnd, dc_handle)
-        return im.crop((11,45, *self.size(11, 11))) # crop borders
+        if crop:
+            im = im.crop((11,45, *self.size(11, 11)))
+        return im
 
     """
     Press(hold) single key
