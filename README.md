@@ -48,6 +48,12 @@ Waits until the client is past the loading screen. This uses the screenshot meth
 ### Client.screenshot() -> PIL.Image
 Returns a `PIL.Image` screenshot of the client in it's current window size.
 
+### Client.press_key(key)
+Simulates a key press on the client, using the provided vk code.
+
+### Client.release_key(key)
+Simulates a key release on the client, using the provided vk code.
+
 ### Client.chat_message(message)
 Attempts to write and send a chat message by simulating keystrokes on the client.
 
