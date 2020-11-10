@@ -58,7 +58,6 @@ class ClientMutex:
         self.mutex = ctypes.windll.kernel32.CreateMutexW(None, True, "ROBLOX_singletonMutex")
 
 class Client:
-    redeem_url = "https://www.roblox.com/Login/Negotiate.ashx"
     place_id: int
     job_id: str
     hwnd: int
@@ -69,6 +68,7 @@ class Client:
         if not session.id:
             raise("Session is not authenticated")
         self.session = session
+        self.redeem_url = self.session.build_url("www", "/Login/Negotiate.ashx")
         self.client_path = client_path
         self.place_id = place_id
         self.job_id = job_id
