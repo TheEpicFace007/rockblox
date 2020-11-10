@@ -22,7 +22,6 @@ def get_hwnd_for_pid(pid: int) -> int:
             _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
             if found_pid == pid:
                 hwnds.append(hwnd)
-                #return False
         return True
         
     hwnds = []
