@@ -59,11 +59,12 @@ class Session:
     """
     Build URL based on self.host, subdomain and path
     """                            
-    def build_url(self, subdomain: str, path: str="") -> str:
+    def build_url(self, subdomain: str, path: str="",
+                  protocol: str="https") -> str:
         # redirect under-13 accounts to web subdomain
         if subdomain.lower() == "www" and self.under_13:
             subdomain = "web"
-        return f"https://{subdomain}.{self.host}{path}"
+        return f"{protocol}://{subdomain}.{self.host}{path}"
 
     """
     Attempt to authenticate using provided .ROBLOSECURITY cookie

@@ -113,7 +113,7 @@ class Client:
         ]
         username = os.environ["USERPROFILE"].split("\\")[-1]
         with requests.get(self.session.build_url(
-            "setup", "/version.txt")
+            "setup", "/version.txt", "http")
         ) as resp:
             version = resp.text.strip()
 
