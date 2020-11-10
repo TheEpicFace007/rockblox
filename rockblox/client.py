@@ -136,31 +136,6 @@ class Client:
         elif self.place_id:
             script_url = f"{pl_url}?request=RequestGame&browserTrackerId={self.session.browser_id}&placeId={self.place_id}&isPlayTogetherGame=false"
         return script_url
-    
-    """
-    Uses the 'Presence Web-API' to check if the user is currently in-game.
-    Can be used as a kind of "ping" to check if the client has disconnected from the game.
-    """
-    def ping(self, match_place_id: bool=False, match_job_id: bool=False) -> bool:
-        with self.session.request(
-            method="GET",
-            url=self.session.build_url(
-                "api", f"/users/{self.session.id}/onlinestatus"),
-        ) as resp:
-            presence = resp.json()
-
-        if presence["LastLocation"] != "Playing":
-            return False
-        
-        if match_place_id \
-            and presence["PlaceId"] != self.place_id:
-            return False
-        
-        if match_job_id \
-            and presence["GameId"] != self.job_id:
-            return False
-        
-        return True
 
     """
     Waits until the client is past the loading screen.
@@ -179,7 +154,7 @@ class Client:
                 return
             time.sleep(check_interval)
         
-        raise TimeoutError
+        raise TimeoutError("Timed out while loading")
 
     """
     Kill the client process
