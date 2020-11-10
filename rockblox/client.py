@@ -44,13 +44,13 @@ class Client:
     process: subprocess.Popen
 
     def __init__(self, session: 'Session', place_id: int, job_id: str=None,
-        size: tuple=(100,100), client_path: str=find_client_path()):
+        size: tuple=(100,100), client_path: str=None):
         if not session.id:
             raise("Session is not authenticated")
         self.session = session
         self.redeem_url = self.session.build_url(
             "www", "/Login/Negotiate.ashx")
-        self.client_path = client_path
+        self.client_path = client_path or self.find_client_path()
         self.place_id = place_id
         self.job_id = job_id
         self.process = None
@@ -104,7 +104,6 @@ class Client:
         if not self.hwnd:
             self.close()
             raise TimeoutError("Timed out while getting window")
-
 
     def find_client_path(self) -> str:
         templates = [
