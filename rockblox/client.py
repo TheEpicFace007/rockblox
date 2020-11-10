@@ -95,7 +95,7 @@ class Client:
             raise Exception(".launch() has already been called")
 
         with self.session.request(
-            "POST", "https://auth.roblox.com/v1/authentication-ticket") as resp:
+            "POST", self.session.build_url("auth", "/v1/authentication-ticket")) as resp:
             auth_ticket = resp.headers["rbx-authentication-ticket"]
         
         self.process = subprocess.Popen([
@@ -125,7 +125,7 @@ class Client:
     Build joinscript URL based on initial parameters
     """
     def build_joinscript_url(self) -> str:
-        pl_url = "https://assetgame.roblox.com/game/PlaceLauncher.ashx"
+        pl_url = self.session.build_url("assetgame", "/game/PlaceLauncher.ashx")
         if self.place_id and self.job_id:
             script_url = f"{pl_url}?request=RequestGameJob&browserTrackerId={self.session.browser_id}&placeId={self.place_id}&gameId={self.job_id}&isPlayTogetherGame=false"
         elif self.place_id:
@@ -139,7 +139,7 @@ class Client:
     def ping(self, match_place_id: bool=False, match_job_id: bool=False) -> bool:
         with self.session.request(
             method="GET",
-            url=f"https://api.roblox.com/users/{self.session.id}/onlinestatus",
+            url=self.session.build_url("api", f"/users/{self.session.id}/onlinestatus"),
         ) as resp:
             presence = resp.json()
 
