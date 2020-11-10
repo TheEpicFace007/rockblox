@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="rockblox",
-    version="0.0.1",
+    #version="0.0.1",
     author="h0nda",
     author_email="1@1.com",
     description="Roblox wrapper, with support for the game client",
