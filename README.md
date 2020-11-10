@@ -45,9 +45,6 @@ Creates a new client instance.
 ### Client.wait_for(timeout=15, check_interval=0.25, ignore_colors=\[(45, 45, 45)])
 Waits until the client is past the loading screen. This uses the screenshot method and therefore may not be 100% reliable.
 
-### Client.ping(match_place_id=True, match_job_id=False) -> bool
-Checks if the user is currently in-game using the presence web-api, can be used as a kind of "ping" to check if the client has disconnected from the game.
-
 ### Client.screenshot() -> PIL.Image
 Returns a `PIL.Image` screenshot of the client in it's current window size.
 
