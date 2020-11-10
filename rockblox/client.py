@@ -68,7 +68,8 @@ class Client:
         if not session.id:
             raise("Session is not authenticated")
         self.session = session
-        self.redeem_url = self.session.build_url("www", "/Login/Negotiate.ashx")
+        self.redeem_url = self.session.build_url(
+            "www", "/Login/Negotiate.ashx")
         self.client_path = client_path
         self.place_id = place_id
         self.job_id = job_id
@@ -96,7 +97,8 @@ class Client:
 
         with self.session.request(
             method="POST",
-            url=self.session.build_url("auth", "/v1/authentication-ticket")
+            url=self.session.build_url(
+                "auth", "/v1/authentication-ticket")
         ) as resp:
             auth_ticket = resp.headers["rbx-authentication-ticket"]
         
@@ -127,7 +129,8 @@ class Client:
     Build joinscript URL based on initial parameters
     """
     def build_joinscript_url(self) -> str:
-        pl_url = self.session.build_url("assetgame", "/game/PlaceLauncher.ashx")
+        pl_url = self.session.build_url(
+            "assetgame", "/game/PlaceLauncher.ashx")
         if self.place_id and self.job_id:
             script_url = f"{pl_url}?request=RequestGameJob&browserTrackerId={self.session.browser_id}&placeId={self.place_id}&gameId={self.job_id}&isPlayTogetherGame=false"
         elif self.place_id:
@@ -141,7 +144,8 @@ class Client:
     def ping(self, match_place_id: bool=False, match_job_id: bool=False) -> bool:
         with self.session.request(
             method="GET",
-            url=self.session.build_url("api", f"/users/{self.session.id}/onlinestatus"),
+            url=self.session.build_url(
+                "api", f"/users/{self.session.id}/onlinestatus"),
         ) as resp:
             presence = resp.json()
 
