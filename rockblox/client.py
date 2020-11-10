@@ -95,7 +95,8 @@ class Client:
             raise Exception(".launch() has already been called")
 
         with self.session.request(
-            "POST", self.session.build_url("auth", "/v1/authentication-ticket")) as resp:
+            "POST", self.session.build_url("auth", "/v1/authentication-ticket")
+        ) as resp:
             auth_ticket = resp.headers["rbx-authentication-ticket"]
         
         self.process = subprocess.Popen([
