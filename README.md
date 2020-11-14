@@ -42,7 +42,7 @@ Takes control of the client mutex, so that multiple client instances can be open
 ### Client(session, place_id, job_id=None, client_path=default)
 Creates a new client instance.
 
-### Client.wait_for(timeout=15, check_interval=0.25, ignore_colors=\[(45, 45, 45)])
+### Client.wait_for(timeout=15, check_interval=0.25, ignore_colors=\[(0, 0, 0) (45, 45, 45)])
 Waits until the client is past the loading screen. This uses the screenshot method and therefore may not be 100% reliable.
 
 ### Client.screenshot() -> PIL.Image
