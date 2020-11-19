@@ -33,7 +33,9 @@ class Session:
         self.id = None
         self.name = None
         self.under_13 = None
+        self._setup(ROBLOSECURITY)
 
+    def _setup(self, ROBLOSECURITY):
         self.request("GET", self.build_url("www", "/"))
         self.request("GET", self.build_url("www", "/timg/rbx"))
 
