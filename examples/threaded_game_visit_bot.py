@@ -26,7 +26,7 @@ class Worker(Thread):
                     client.wait_for(10)
                 print("Visited using", session.name)
             except Exception as exc:
-                print(f"Exception occurred with {session.name}:", err)
+                print(f"Exception occurred with {session.name}:", exc)
     
     def get_session(self):
         while 1:
