@@ -18,7 +18,7 @@ KEYEVENTF_SCANCODE    = 0x0008
 MAPVK_VK_TO_VSC = 0
 
 VK_CODE = {
-           'mouse1': '0x01',
+           'mouse1': 0x01,
            'backspace':0x08,
            'tab':0x09,
            'clear':0x0C,
